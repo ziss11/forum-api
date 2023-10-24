@@ -1,43 +1,43 @@
-const RegisteredUser = require('../RegisteredUser')
+const RegisteredUser = require('../RegisteredUser');
 
 describe('a RegisteredUser entities', () => {
   it('should throw error when payload did not contain needed property', () => {
-    // arrage
+    // Arrange
     const payload = {
       username: 'dicoding',
-      fullname: 'Dicoding Indonesia'
-    }
+      fullname: 'Dicoding Indonesia',
+    };
 
-    // act and assert
-    expect(() => new RegisteredUser(payload)).toThrowError('REGISTERED_USER.NOT_CONTAIN_NEEDED_PROPERTY')
-  })
+    // Action and Assert
+    expect(() => new RegisteredUser(payload)).toThrowError('REGISTERED_USER.NOT_CONTAIN_NEEDED_PROPERTY');
+  });
 
-  it('should throw error when payload did not meet data type spesification', () => {
-    // arrange
+  it('should throw error when payload did not meet data type specification', () => {
+    // Arrange
     const payload = {
       id: 123,
       username: 'dicoding',
-      fullname: 'Dicoding Indonesia'
-    }
+      fullname: {},
+    };
 
-    // act and assert
-    expect(() => new RegisteredUser(payload)).toThrowError('REGISTERED_USER.NOT_MEET_DATA_TYPE_SPESIFICATION')
-  })
+    // Action and Assert
+    expect(() => new RegisteredUser(payload)).toThrowError('REGISTERED_USER.NOT_MEET_DATA_TYPE_SPECIFICATION');
+  });
 
   it('should create registeredUser object correctly', () => {
-    // arrange
+    // Arrange
     const payload = {
       id: 'user-123',
       username: 'dicoding',
-      fullname: 'Dicoding Indonesia'
-    }
+      fullname: 'Dicoding Indonesia',
+    };
 
-    // act
-    const { id, username, fullname } = new RegisteredUser(payload)
+    // Action
+    const registeredUser = new RegisteredUser(payload);
 
-    // assert
-    expect(id).toEqual(payload.id)
-    expect(username).toEqual(payload.username)
-    expect(fullname).toEqual(payload.fullname)
-  })
-})
+    // Assert
+    expect(registeredUser.id).toEqual(payload.id);
+    expect(registeredUser.username).toEqual(payload.username);
+    expect(registeredUser.fullname).toEqual(payload.fullname);
+  });
+});

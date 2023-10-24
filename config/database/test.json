@@ -1,7 +1,7 @@
 {
-    "user": "developer",
-    "password": "110801",
-    "host": "localhost",
-    "port": 5432,
-    "database": "authapi_test"
+  "user": "developer",
+  "password": "supersecretpassword",
+  "host": "localhost",
+  "port": 5432,
+  "database": "forumapi_test"
 }
