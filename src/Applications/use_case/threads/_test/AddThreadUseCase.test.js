@@ -1,3 +1,5 @@
+// const ThreadRepository = require('../../../../Domains/threads/ThreadRepository')
+// const AddedThread = require('../../../../Domains/threads/entities/AddedThread')
 // const AddThreadUseCase = require('../AddThreadUseCase')
 
 // describe('AddThreadUseCase', () => {
@@ -7,5 +9,14 @@
 //       title: 'title',
 //       body: 'body'
 //     }
+//     const mockAddedThread = new AddedThread({
+//       id: 'thread-123',
+//       title: 'Thread 1',
+//       owner: 'user-123'
+//     })
+
+//     const mockThreadRepository = new ThreadRepository()
+
+//     mockThreadRepository.addThread = jest.fn()
 //   })
 // })
