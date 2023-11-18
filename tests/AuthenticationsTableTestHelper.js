@@ -18,7 +18,6 @@ const AuthenticationsTableTestHelper = {
     }
 
     const result = await pool.query(query)
-
     return result.rows
   },
   async cleanTable () {
