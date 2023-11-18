@@ -1,17 +1,17 @@
 class ThreadRepository {
-  async addThread (newThread) {
+  async addThread (owner, newThread) {
     throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED')
   }
 
-  async addThreadCommentsById ({ threadId, content }) {
+  async addThreadCommentsById (owner, threadId, content) {
     throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED')
   }
 
-  async deleteThreadComments (threadId) {
+  async deleteThreadComments (owner, threadId) {
     throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED')
   }
 
-  async getThreadById (threadId) {
+  async getThreadById (owner, threadId) {
     throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED')
   }
 }

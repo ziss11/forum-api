@@ -1,6 +1,10 @@
 class AddedThread {
   constructor (payload) {
     this._verifyPayload(payload)
+
+    this.id = payload.id
+    this.title = payload.title
+    this.owner = payload.owner
   }
 
   _verifyPayload (payload) {

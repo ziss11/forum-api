@@ -23,4 +23,21 @@ describe('a AddedThread entities', () => {
     // Action and Assert
     expect(() => new AddedThread(payload)).toThrowError('ADDED_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION')
   })
+
+  it('should create addedThread object correctly', () => {
+    // Arrange
+    const payload = {
+      id: 'thread-123',
+      title: 'Thread 1',
+      owner: 'user-123'
+    }
+
+    // Action
+    const { id, title, owner } = new AddedThread(payload)
+
+    // Assert
+    expect(id).toEqual(payload.id)
+    expect(title).toEqual(payload.title)
+    expect(owner).toEqual(payload.owner)
+  })
 })
