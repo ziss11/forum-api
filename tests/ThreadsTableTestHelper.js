@@ -17,10 +17,16 @@ const ThreadsTableTestHelper = {
     await pool.query(query)
   },
 
-  async findThreadsById (id) {
+  async findThreadsById (id, owner) {
     const query = {
-      text: 'SELECT * FROM threads WHERE id = $1',
-      values: [id]
+      text: `SELECT threads.id, threads.title, threads.body, threads.date AS thread_date,
+      thread_owner.username AS thread_owner_username, comments.id AS comment_id, comments.content,
+      comments.date AS comment_date, comment_owner.username AS comment_owner_username FROM threads
+      LEFT JOIN users AS thread_owner ON threads.owner = thread_owner.id
+      LEFT JOIN comments ON threads.id = comments.thread_id
+      LEFT JOIN users AS comment_owner ON comments.owner = comment_owner.id
+      WHERE threads.id = $1 AND threads.owner = $2;`,
+      values: [id, owner]
     }
 
     const result = await pool.query(query)

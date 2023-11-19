@@ -20,6 +20,7 @@ describe('ThreadRepository postgres', () => {
 
   describe('addThread function', () => {
     const owner = 'user-123'
+    const threadId = 'thread-123'
 
     it('should add thread to database', async () => {
       // Arrange
@@ -36,7 +37,7 @@ describe('ThreadRepository postgres', () => {
       await threadRepositoryPostgres.addThread(owner, newThread)
 
       // Assert
-      const threads = await ThreadsTableTestHelper.findThreadsById('thread-123')
+      const threads = await ThreadsTableTestHelper.findThreadsById(threadId, owner)
       expect(threads).toHaveLength(1)
     })
 
@@ -56,7 +57,7 @@ describe('ThreadRepository postgres', () => {
 
       // Assert
       expect(addedThread).toStrictEqual(new AddedThread({
-        id: 'thread-123',
+        id: threadId,
         title: 'Title',
         owner
       }))
@@ -66,8 +67,9 @@ describe('ThreadRepository postgres', () => {
   describe('addThreadCommentsById', () => {
     const owner = 'user-123'
     const threadId = 'thread-123'
+    const commentId = 'comment-123'
 
-    it('should persist add thread comments and return added comment correct', async () => {
+    it('should persist add thread comments and return added comment correctly', async () => {
       // Arrange
       const content = 'content'
       const fakeIdGenerator = () => 123
@@ -80,7 +82,7 @@ describe('ThreadRepository postgres', () => {
       await threadRepositoryPostgres.addThreadCommentsById(owner, threadId, content)
 
       // Assert
-      const comment = await CommentsTableTestHelper.findCommentsById('comment-123')
+      const comment = await CommentsTableTestHelper.findCommentsById(commentId, owner, threadId)
       expect(comment).toHaveLength(1)
     })
 
@@ -122,8 +124,33 @@ describe('ThreadRepository postgres', () => {
       await threadRepositoryPostgres.deleteThreadComments(owner, threadId, commentId)
 
       // Assert
-      const comment = await CommentsTableTestHelper.findCommentsById(commentId)
+      const comment = await CommentsTableTestHelper.findCommentsById(commentId, threadId, owner)
       expect(comment).toHaveLength(0)
+    })
+  })
+
+  describe('getThreadById', () => {
+    const threadOwner = 'user-123'
+    const commentOwner = 'user-321'
+    const threadId = 'thread-123'
+    const commentId = 'comment-123'
+
+    it('should get thread by id and return thread detail correctly', async () => {
+      // Arrange
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: threadOwner, username: 'dicoding' })
+      await UsersTableTestHelper.addUser({ id: commentOwner, username: 'john' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+      await CommentsTableTestHelper.addComments({ id: commentId, owner: commentOwner })
+
+      // Action
+      await threadRepositoryPostgres.getThreadById(threadOwner, threadId)
+
+      // Assert
+      const threadDetail = await ThreadsTableTestHelper.findThreadsById(threadId, threadOwner)
+      expect(threadDetail).toHaveLength(1)
     })
   })
 })
