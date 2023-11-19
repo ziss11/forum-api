@@ -82,7 +82,7 @@ describe('ThreadRepository postgres', () => {
       await threadRepositoryPostgres.addThreadCommentsById(owner, threadId, content)
 
       // Assert
-      const comment = await CommentsTableTestHelper.findCommentsById(commentId, owner, threadId)
+      const comment = await CommentsTableTestHelper.findCommentsById(commentId)
       expect(comment).toHaveLength(1)
     })
 
