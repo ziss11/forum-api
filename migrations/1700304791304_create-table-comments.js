@@ -7,12 +7,14 @@ exports.up = pgm => {
     owner: {
       type: 'VARCHAR(50)',
       notNull: true,
-      references: 'users(id)'
+      references: 'users(id)',
+      onDelete: 'CASCADE'
     },
     thread_id: {
       type: 'VARCHAR(50)',
       notNull: true,
-      references: 'threads(id)'
+      references: 'threads(id)',
+      onDelete: 'CASCADE'
     },
     content: {
       type: 'TEXT',
