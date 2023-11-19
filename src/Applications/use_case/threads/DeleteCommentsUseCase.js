@@ -3,8 +3,8 @@ class DeleteCommentsUseCase {
     this._threadRepository = threadRepository
   }
 
-  async execute (owner, threadId) {
-    return await this._threadRepository.deleteThreadComments(owner, threadId)
+  async execute (owner, threadId, commentId) {
+    return await this._threadRepository.deleteThreadComments(owner, threadId, commentId)
   }
 }
 

@@ -33,11 +33,17 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     }
 
     const result = await this._pool.query(query)
-    console.log(result)
     return new AddedComments({ ...result.rows[0] })
   }
 
-  async deleteThreadComments (owner, threadId) {}
+  async deleteThreadComments (owner, threadId, commentId) {
+    const query = {
+      text: 'DELETE FROM comments WHERE id = $1 AND owner = $2 AND thread_id = $3',
+      values: [commentId, owner, threadId]
+    }
+
+    await this._pool.query(query)
+  }
 
   async getThreadById (owner, threadId) {}
 }

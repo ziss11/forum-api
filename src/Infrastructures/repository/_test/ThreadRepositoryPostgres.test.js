@@ -104,4 +104,26 @@ describe('ThreadRepository postgres', () => {
       }))
     })
   })
+
+  describe('deleteThreadComments', () => {
+    it('should delete thread comments from database', async () => {
+      // Arrange
+      const owner = 'user-123'
+      const threadId = 'thread-123'
+      const commentId = 'comment-123'
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: owner, username: 'dicoding' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+      await CommentsTableTestHelper.addComments({ id: commentId })
+
+      // Action
+      await threadRepositoryPostgres.deleteThreadComments(owner, threadId, commentId)
+
+      // Assert
+      const comment = await CommentsTableTestHelper.findCommentsById(commentId)
+      expect(comment).toHaveLength(0)
+    })
+  })
 })

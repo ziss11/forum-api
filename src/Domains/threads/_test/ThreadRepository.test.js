@@ -8,7 +8,7 @@ describe('ThreadRepository interface', () => {
     // Action and Assert
     expect(threadRepository.addThread('', {})).rejects.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED')
     expect(threadRepository.addThreadCommentsById('', '', '')).rejects.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED')
-    expect(threadRepository.deleteThreadComments('')).rejects.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED')
+    expect(threadRepository.deleteThreadComments('', '', '')).rejects.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED')
     expect(threadRepository.getThreadById('', '')).rejects.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED')
   })
 })

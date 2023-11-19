@@ -6,6 +6,7 @@ describe('DeleteCommentsUseCase', () => {
     // Arrange
     const owner = 'user-123'
     const threadId = 'thread-123'
+    const commentId = 'comment-123'
 
     const mockDeletedCommentsResponse = {
       status: 'success'
@@ -21,12 +22,12 @@ describe('DeleteCommentsUseCase', () => {
     })
 
     // Action
-    const deletedCommentsResponse = await getThreadUseCase.execute(owner, threadId)
+    const deletedCommentsResponse = await getThreadUseCase.execute(owner, threadId, commentId)
 
     // Assert
     expect(deletedCommentsResponse).toStrictEqual({
       status: 'success'
     })
-    expect(mockThreadRepository.deleteThreadComments).toBeCalledWith(owner, threadId)
+    expect(mockThreadRepository.deleteThreadComments).toBeCalledWith(owner, threadId, commentId)
   })
 })
