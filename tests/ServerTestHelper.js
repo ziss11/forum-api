@@ -23,6 +23,23 @@ const ServerTestHelper = {
 
     const { accessToken } = JSON.parse(responseAuth.payload).data
     return accessToken
+  },
+
+  async getThreadHelper ({ server, accessToken }) {
+    const responseThread = await server.inject({
+      method: 'POST',
+      url: '/threads',
+      payload: {
+        title: 'thread title',
+        body: 'thread body'
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+
+    const { id } = JSON.parse(responseThread.payload).data.addedThread
+    return id
   }
 }
 

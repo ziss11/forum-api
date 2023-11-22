@@ -6,6 +6,7 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper')
 const AddedThread = require('../../../Domains/threads/entities/AddedThread')
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper')
 const AddedComments = require('../../../Domains/threads/entities/AddedComments')
+const NotFoundError = require('../../../Commons/exceptions/NotFoundError')
 
 describe('ThreadRepository postgres', () => {
   afterEach(async () => {
@@ -104,6 +105,21 @@ describe('ThreadRepository postgres', () => {
         content,
         owner
       }))
+    })
+
+    it('shoud throw NotFoundError when thread not found', async () => {
+      // Arrange
+      const content = 'content'
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: owner, username: 'dicoding' })
+
+      // Action
+      const addedComment = threadRepositoryPostgres.addThreadCommentsById(owner, threadId, content)
+
+      // Assert
+      expect(addedComment).rejects.toThrowError(NotFoundError)
     })
   })
 

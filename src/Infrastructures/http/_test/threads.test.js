@@ -43,5 +43,159 @@ describe('/threads endpoint', () => {
       expect(responseJson.status).toEqual('success')
       expect(responseJson.data.addedThread).toBeDefined()
     })
+
+    it('should response 400 when request payload not contain needed property', async () => {
+      // Arrange
+      const requestPayload = {
+        body: 'Dicoding Indonesia'
+      }
+      const server = await createServer(container)
+      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
+
+      // Action
+      const response = await server.inject({
+        method: 'POST',
+        url: '/threads',
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        },
+        payload: requestPayload
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(400)
+      expect(responseJson.status).toEqual('fail')
+      expect(responseJson.message).toEqual('tidak dapat membuat thread baru karena properti yang dibutuhkan tidak ada')
+    })
+
+    it('should response 400 when request payload not meet data type specification', async () => {
+      // Arrange
+      const requestPayload = {
+        title: 'dicoding',
+        body: 123
+      }
+      const server = await createServer(container)
+      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
+
+      // Action
+      const response = await server.inject({
+        method: 'POST',
+        url: '/threads',
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        },
+        payload: requestPayload
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(400)
+      expect(responseJson.status).toEqual('fail')
+      expect(responseJson.message).toEqual('tidak dapat membuat thread baru karena tipe data tidak sesuai')
+    })
+  })
+
+  describe('when POST /threads/{id}/comments', () => {
+    it('should response 201 and persisted comment', async () => {
+      // Arrange
+      const requestPayload = {
+        content: 'Dicoding Indonesia'
+      }
+      const server = await createServer(container)
+      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
+      const threadId = await ServerTestHelper.getThreadHelper({ server, accessToken })
+
+      // Action
+      const response = await server.inject({
+        method: 'POST',
+        url: `/threads/${threadId}/comments`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        },
+        payload: requestPayload
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(201)
+      expect(responseJson.status).toEqual('success')
+      expect(responseJson.data.addedComment).toBeDefined()
+    })
+
+    it('should response 400 when request payload not contain needed property', async () => {
+      // Arrange
+      const server = await createServer(container)
+      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
+      const threadId = await ServerTestHelper.getThreadHelper({ server, accessToken })
+
+      // Action
+      const response = await server.inject({
+        method: 'POST',
+        url: `/threads/${threadId}/comments`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        },
+        payload: {}
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(400)
+      expect(responseJson.status).toEqual('fail')
+      expect(responseJson.message).toEqual('tidak dapat membuat comment baru karena properti yang dibutuhkan tidak ada')
+    })
+
+    it('should response 400 when request payload not meet data type specification', async () => {
+      // Arrange
+      const requestPayload = {
+        content: 123
+      }
+      const server = await createServer(container)
+      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
+      const threadId = await ServerTestHelper.getThreadHelper({ server, accessToken })
+
+      // Action
+      const response = await server.inject({
+        method: 'POST',
+        url: `/threads/${threadId}/comments`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        },
+        payload: requestPayload
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(400)
+      expect(responseJson.status).toEqual('fail')
+      expect(responseJson.message).toEqual('tidak dapat membuat comment baru karena tipe data tidak sesuai')
+    })
+
+    it('should response 404 when thread not found', async () => {
+      // Arrange
+      const requestPayload = {
+        content: 'Dicoding Indonesia'
+      }
+      const server = await createServer(container)
+      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
+      const threadId = 'thread-122'
+
+      // Action
+      const response = await server.inject({
+        method: 'POST',
+        url: `/threads/${threadId}/comments`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        },
+        payload: requestPayload
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(404)
+      expect(responseJson.status).toEqual('fail')
+      expect(responseJson.message).toEqual('thread tidak ditemukan')
+    })
   })
 })

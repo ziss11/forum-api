@@ -3,12 +3,26 @@ const AddedThread = require('../../Domains/threads/entities/AddedThread')
 const AddedComments = require('../../Domains/threads/entities/AddedComments')
 const ThreadDetail = require('../../Domains/threads/entities/ThreadDetail')
 const Comment = require('../../Domains/threads/entities/Comment')
+const NotFoundError = require('../../Commons/exceptions/NotFoundError')
 
 class ThreadRepositoryPostgres extends ThreadRepository {
   constructor (pool, idGenerator) {
     super()
     this._pool = pool
     this._idGenerator = idGenerator
+  }
+
+  async verifyThreadAvailability (threadId) {
+    const query = {
+      text: 'SELECT * FROM threads WHERE id = $1',
+      values: [threadId]
+    }
+
+    const result = await this._pool.query(query)
+
+    if (!result.rowCount) {
+      throw new NotFoundError('thread tidak ditemukan')
+    }
   }
 
   async addThread (owner, newThread) {
@@ -26,6 +40,8 @@ class ThreadRepositoryPostgres extends ThreadRepository {
   }
 
   async addThreadCommentsById (owner, threadId, content) {
+    await this.verifyThreadAvailability(threadId)
+
     const id = `comment-${this._idGenerator()}`
     const date = new Date().toISOString()
 
@@ -35,6 +51,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     }
 
     const result = await this._pool.query(query)
+
     return new AddedComments({ ...result.rows[0] })
   }
 
