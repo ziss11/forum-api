@@ -60,8 +60,6 @@ class ThreadRepositoryPostgres extends ThreadRepository {
   }
 
   async addThreadCommentsById (owner, threadId, content) {
-    await this.verifyThreadAvailability(threadId)
-
     const id = `comment-${this._idGenerator()}`
     const date = new Date().toISOString()
 
@@ -75,12 +73,9 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     return new AddedComments({ ...result.rows[0] })
   }
 
-  async deleteThreadComments (owner, threadId, commentId) {
-    await this.verifyThreadAvailability(threadId)
-    await this.verifyCommentOwner(commentId, owner)
-
+  async deleteThreadComments (commentId) {
     const query = {
-      text: 'UPDATE comments SET is_delete = true WHERE id = $1',
+      text: 'UPDATE comments SET is_delete = true WHERE id = $1 RETURNING id, is_delete',
       values: [commentId]
     }
 
@@ -112,7 +107,6 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       date: comment.comment_date,
       content: comment.comment_is_delete ? '**komentar telah dihapus**' : comment.content
     }))
-
     return new ThreadDetail({ id, title, body, date, username, comments })
   }
 }

@@ -34,6 +34,6 @@ describe('DeleteCommentsUseCase', () => {
     })
     expect(mockThreadRepository.verifyThreadAvailability).toBeCalledWith(threadId)
     expect(mockThreadRepository.verifyCommentOwner).toBeCalledWith(commentId, owner)
-    expect(mockThreadRepository.deleteThreadComments).toBeCalledWith(owner, threadId, commentId)
+    expect(mockThreadRepository.deleteThreadComments).toBeCalledWith(commentId)
   })
 })

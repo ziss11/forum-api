@@ -18,6 +18,8 @@ describe('AddCommentsById', () => {
 
     const mockThreadRepository = new ThreadRepository()
 
+    mockThreadRepository.verifyThreadAvailability = jest.fn()
+      .mockImplementation(() => Promise.resolve(mockAddedComments))
     mockThreadRepository.addThreadCommentsById = jest.fn()
       .mockImplementation(() => Promise.resolve(mockAddedComments))
 
@@ -35,6 +37,7 @@ describe('AddCommentsById', () => {
       content: useCasePayload.content,
       owner: useCasePayload.owner
     }))
+    expect(mockThreadRepository.verifyThreadAvailability).toBeCalledWith(threadId)
     expect(mockThreadRepository.addThreadCommentsById).toBeCalledWith(owner, threadId, content)
   })
 })

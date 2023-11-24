@@ -25,14 +25,13 @@ describe('ThreadRepository postgres', () => {
       // Arrange
       const owner = 'user-123'
       const threadId = 'thread-123'
-      const content = 'content'
       const fakeIdGenerator = () => 123
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
 
       await UsersTableTestHelper.addUser({ id: owner, username: 'dicoding' })
 
       // Action
-      const addedComment = threadRepositoryPostgres.addThreadCommentsById(owner, threadId, content)
+      const addedComment = threadRepositoryPostgres.verifyThreadAvailability(threadId)
 
       // Assert
       await expect(addedComment).rejects.toThrowError(NotFoundError)
@@ -40,6 +39,23 @@ describe('ThreadRepository postgres', () => {
   })
 
   describe('verifyCommentOwner function', () => {
+    it('should throw NotFoundError when comment not found', async () => {
+      // Arrange
+      const owner = 'user-123'
+      const threadId = 'thread-123'
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: owner, username: 'dicoding' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+
+      // Action
+      const addedComment = threadRepositoryPostgres.verifyCommentOwner('comment-321', owner)
+
+      // Assert
+      await expect(addedComment).rejects.toThrowError(NotFoundError)
+    })
+
     it('should throw AuthorizationError when user not owner', async () => {
       // Arrange
       const threadId = 'thread-123'
@@ -52,7 +68,7 @@ describe('ThreadRepository postgres', () => {
       await CommentsTableTestHelper.addComments({ id: commentId })
 
       // Action
-      const result = threadRepositoryPostgres.deleteThreadComments('user-122', threadId, commentId)
+      const result = threadRepositoryPostgres.verifyCommentOwner(commentId, 'user-321')
 
       // Assert
       await expect(result).rejects.toThrowError(AuthorizationError)
@@ -162,27 +178,11 @@ describe('ThreadRepository postgres', () => {
       await CommentsTableTestHelper.addComments({ id: commentId })
 
       // Action
-      await threadRepositoryPostgres.deleteThreadComments(owner, threadId, commentId)
+      await threadRepositoryPostgres.deleteThreadComments(commentId)
 
       // Assert
-      const comment = await CommentsTableTestHelper.findCommentsById(commentId, threadId, owner)
+      const comment = await CommentsTableTestHelper.findCommentsById(commentId)
       expect(comment[0].is_delete).toBeTruthy()
-    })
-
-    it('should throw NotFoundError when comment not found', async () => {
-      // Arrange
-      const fakeIdGenerator = () => 123
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
-
-      await UsersTableTestHelper.addUser({ id: 'user-123', username: 'dicoding' })
-      await ThreadsTableTestHelper.addThread({ id: 'thread-123' })
-      await CommentsTableTestHelper.addComments({ id: 'comment-123' })
-
-      // Action
-      const result = threadRepositoryPostgres.deleteThreadComments('user-123', 'thread-123', 'comment-122')
-
-      // Assert
-      await expect(result).rejects.toThrowError(NotFoundError)
     })
   })
 

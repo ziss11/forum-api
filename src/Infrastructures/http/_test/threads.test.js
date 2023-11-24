@@ -290,22 +290,6 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread).toBeDefined()
     })
 
-    it('should response 404 when thread not found', async () => {
-      // Arrange
-      const server = await createServer(container)
-      const threadId = 'thread-122'
-      // Action
-      const response = await server.inject({
-        method: 'GET',
-        url: `/threads/${threadId}`
-      })
-
-      // Assert
-      const responseJson = JSON.parse(response.payload)
-      expect(response.statusCode).toEqual(404)
-      expect(responseJson.status).toEqual('fail')
-    })
-
     it('should show **komentar telah dihapus** when get deleted comment', async () => {
       // Arrange
       const server = await createServer(container)
@@ -326,6 +310,22 @@ describe('/threads endpoint', () => {
       expect(response.statusCode).toEqual(200)
       expect(responseJson.status).toEqual('success')
       expect(deletedComment.content).toEqual('**komentar telah dihapus**')
+    })
+
+    it('should response 404 when thread not found', async () => {
+      // Arrange
+      const server = await createServer(container)
+      const threadId = 'thread-122'
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: `/threads/${threadId}`
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(404)
+      expect(responseJson.status).toEqual('fail')
     })
   })
 })

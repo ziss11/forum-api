@@ -5,6 +5,7 @@ class AddCommentsByIdUseCase {
 
   async execute (owner, threadId, content) {
     this._validatePayload({ owner, threadId, content })
+    await this._threadRepository.verifyThreadAvailability(threadId)
     return this._threadRepository.addThreadCommentsById(owner, threadId, content)
   }
 
