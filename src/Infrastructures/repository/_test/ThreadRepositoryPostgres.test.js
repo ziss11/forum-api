@@ -7,6 +7,7 @@ const AddedThread = require('../../../Domains/threads/entities/AddedThread')
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper')
 const AddedComments = require('../../../Domains/threads/entities/AddedComments')
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError')
+const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError')
 
 describe('ThreadRepository postgres', () => {
   afterEach(async () => {
@@ -141,7 +142,57 @@ describe('ThreadRepository postgres', () => {
 
       // Assert
       const comment = await CommentsTableTestHelper.findCommentsById(commentId, threadId, owner)
-      expect(comment).toHaveLength(0)
+      expect(comment[0].is_delete).toBeTruthy()
+    })
+
+    it('should throw NotFoundError when thread not found', async () => {
+      // Arrange
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: 'user-123', username: 'dicoding' })
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123' })
+      await CommentsTableTestHelper.addComments({ id: 'comment-123' })
+
+      // Action
+      const result = threadRepositoryPostgres.deleteThreadComments('user-123', 'thread-122', 'comment-123')
+
+      // Assert
+      expect(result).rejects.toThrowError(NotFoundError)
+    })
+
+    it('should throw NotFoundError when comment not found', async () => {
+      // Arrange
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: 'user-123', username: 'dicoding' })
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123' })
+      await CommentsTableTestHelper.addComments({ id: 'comment-123' })
+
+      // Action
+      const result = threadRepositoryPostgres.deleteThreadComments('user-123', 'thread-123', 'comment-122')
+
+      // Assert
+      expect(result).rejects.toThrowError(NotFoundError)
+    })
+
+    it('should throw AuthorizationError when user not owner', async () => {
+      // Arrange
+      const threadId = 'thread-123'
+      const commentId = 'comment-123'
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: 'user-123', username: 'dicoding' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+      await CommentsTableTestHelper.addComments({ id: commentId })
+
+      // Action
+      const result = threadRepositoryPostgres.deleteThreadComments('user-122', threadId, commentId)
+
+      // Assert
+      await expect(result).rejects.toThrowError(AuthorizationError)
     })
   })
 

@@ -37,8 +37,23 @@ const ServerTestHelper = {
         Authorization: `Bearer ${accessToken}`
       }
     })
-
     const { id } = JSON.parse(responseThread.payload).data.addedThread
+    return id
+  },
+
+  async getCommentHelper ({ server, accessToken, threadId }) {
+    const responseThread = await server.inject({
+      method: 'POST',
+      url: `/threads/${threadId}/comments`,
+      payload: {
+        content: 'thread comment'
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+
+    const { id } = JSON.parse(responseThread.payload).data.addedComment
     return id
   }
 }

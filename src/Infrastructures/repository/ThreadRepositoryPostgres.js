@@ -4,12 +4,32 @@ const AddedComments = require('../../Domains/threads/entities/AddedComments')
 const ThreadDetail = require('../../Domains/threads/entities/ThreadDetail')
 const Comment = require('../../Domains/threads/entities/Comment')
 const NotFoundError = require('../../Commons/exceptions/NotFoundError')
+const AuthorizationError = require('../../Commons/exceptions/AuthorizationError')
 
 class ThreadRepositoryPostgres extends ThreadRepository {
   constructor (pool, idGenerator) {
     super()
     this._pool = pool
     this._idGenerator = idGenerator
+  }
+
+  async verifyCommentOwner (commentId, owner) {
+    const query = {
+      text: 'SELECT * FROM comments WHERE id = $1',
+      values: [commentId]
+    }
+
+    const result = await this._pool.query(query)
+
+    if (!result.rowCount) {
+      throw new NotFoundError('comment tidak ditemukan')
+    }
+
+    const comment = result.rows[0]
+
+    if (owner !== comment.owner) {
+      throw new AuthorizationError('anda tidak berhak mengakses resource ini')
+    }
   }
 
   async verifyThreadAvailability (threadId) {
@@ -46,8 +66,8 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     const date = new Date().toISOString()
 
     const query = {
-      text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5) RETURNING id, content, owner',
-      values: [id, owner, threadId, content, date]
+      text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5, $6) RETURNING id, content, owner',
+      values: [id, owner, threadId, content, date, false]
     }
 
     const result = await this._pool.query(query)
@@ -56,9 +76,12 @@ class ThreadRepositoryPostgres extends ThreadRepository {
   }
 
   async deleteThreadComments (owner, threadId, commentId) {
+    await this.verifyThreadAvailability(threadId)
+    await this.verifyCommentOwner(commentId, owner)
+
     const query = {
-      text: 'DELETE FROM comments WHERE id = $1 AND owner = $2 AND thread_id = $3',
-      values: [commentId, owner, threadId]
+      text: 'UPDATE comments SET is_delete = true WHERE id = $1',
+      values: [commentId]
     }
 
     await this._pool.query(query)

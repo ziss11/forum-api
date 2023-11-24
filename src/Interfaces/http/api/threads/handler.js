@@ -1,5 +1,6 @@
 const AddThreadUseCase = require('../../../../Applications/use_case/threads/AddThreadUseCase')
 const AddCommentsByIdUseCase = require('../../../../Applications/use_case/threads/AddCommentsByIdUseCase.js')
+const DeleteCommentsUseCase = require('../../../../Applications/use_case/threads/DeleteCommentsUseCase')
 
 class ThreadsHandler {
   constructor (container) {
@@ -7,6 +8,7 @@ class ThreadsHandler {
 
     this.postThreadHandler = this.postThreadHandler.bind(this)
     this.postThreadCommentsHandler = this.postThreadCommentsHandler.bind(this)
+    this.deleteThreadCommentsHandler = this.deleteThreadCommentsHandler.bind(this)
   }
 
   async postThreadHandler (request, h) {
@@ -40,6 +42,21 @@ class ThreadsHandler {
       }
     })
     response.code(201)
+    return response
+  }
+
+  async deleteThreadCommentsHandler (request, h) {
+    const deleteCommentsUseCase = this._container.getInstance(DeleteCommentsUseCase.name)
+
+    const { id: owner } = request.auth.credentials
+    const { threadId, commentId } = request.params
+
+    await deleteCommentsUseCase.execute(owner, threadId, commentId)
+
+    const response = h.response({
+      status: 'success',
+      message: 'Comment deleted successfully'
+    })
     return response
   }
 }
