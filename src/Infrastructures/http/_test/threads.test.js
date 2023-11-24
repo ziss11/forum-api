@@ -268,4 +268,64 @@ describe('/threads endpoint', () => {
       expect(responseJson.status).toEqual('fail')
     })
   })
+
+  describe('when GET /threads/{threadId}', () => {
+    it('should response 200 and detail thread', async () => {
+      // Arrange
+      const server = await createServer(container)
+      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
+      const threadId = await ServerTestHelper.getThreadHelper({ server, accessToken })
+      await ServerTestHelper.getCommentHelper({ server, accessToken, threadId })
+
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: `/threads/${threadId}`
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(200)
+      expect(responseJson.status).toEqual('success')
+      expect(responseJson.data.thread).toBeDefined()
+    })
+
+    it('should response 404 when thread not found', async () => {
+      // Arrange
+      const server = await createServer(container)
+      const threadId = 'thread-122'
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: `/threads/${threadId}`
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(404)
+      expect(responseJson.status).toEqual('fail')
+    })
+
+    it('should show **komentar telah dihapus** when get deleted comment', async () => {
+      // Arrange
+      const server = await createServer(container)
+      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
+      const threadId = await ServerTestHelper.getThreadHelper({ server, accessToken })
+      const commentId = await ServerTestHelper.getCommentHelper({ server, accessToken, threadId })
+      await ServerTestHelper.deleteThreadCommentHandler({ server, accessToken, threadId, commentId })
+
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: `/threads/${threadId}`
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      const deletedComment = responseJson.data.thread.comments.find((comment) => comment.id === commentId)
+      expect(response.statusCode).toEqual(200)
+      expect(responseJson.status).toEqual('success')
+      expect(deletedComment.content).toEqual('**komentar telah dihapus**')
+    })
+  })
 })

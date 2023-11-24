@@ -16,6 +16,11 @@ const routes = (handler) => ([
     }
   },
   {
+    method: 'GET',
+    path: '/threads/{id}',
+    handler: handler.getThreadByIdHandler
+  },
+  {
     method: 'DELETE',
     path: '/threads/{threadId}/comments/{commentId}',
     handler: handler.deleteThreadCommentsHandler,

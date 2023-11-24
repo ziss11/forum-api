@@ -6,7 +6,6 @@ const GetThreadByIdUseCase = require('../GetThreadByIdUseCase')
 describe('GetThreadByIdUseCase', () => {
   it('should orchestrating the get thread by id action correctly', async () => {
     // Arrange
-    const owner = 'user-123'
     const threadId = 'thread-123'
     const mockThreadDetail = new ThreadDetail({
       id: 'thread-h_2FkLZhtgBKY2kh4CC02',
@@ -34,7 +33,7 @@ describe('GetThreadByIdUseCase', () => {
     })
 
     // Action
-    const threadDetail = await getThreadUseCase.execute(owner, threadId)
+    const threadDetail = await getThreadUseCase.execute(threadId)
 
     // Assert
     expect(threadDetail).toStrictEqual(new ThreadDetail({
@@ -52,6 +51,6 @@ describe('GetThreadByIdUseCase', () => {
         })
       ]
     }))
-    expect(mockThreadRepository.getThreadById).toBeCalledWith(owner, threadId)
+    expect(mockThreadRepository.getThreadById).toBeCalledWith(threadId)
   })
 })

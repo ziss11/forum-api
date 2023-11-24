@@ -1,6 +1,7 @@
 const AddThreadUseCase = require('../../../../Applications/use_case/threads/AddThreadUseCase')
 const AddCommentsByIdUseCase = require('../../../../Applications/use_case/threads/AddCommentsByIdUseCase.js')
 const DeleteCommentsUseCase = require('../../../../Applications/use_case/threads/DeleteCommentsUseCase')
+const GetThreadByIdUseCase = require('../../../../Applications/use_case/threads/GetThreadByIdUseCase')
 
 class ThreadsHandler {
   constructor (container) {
@@ -8,6 +9,7 @@ class ThreadsHandler {
 
     this.postThreadHandler = this.postThreadHandler.bind(this)
     this.postThreadCommentsHandler = this.postThreadCommentsHandler.bind(this)
+    this.getThreadByIdHandler = this.getThreadByIdHandler.bind(this)
     this.deleteThreadCommentsHandler = this.deleteThreadCommentsHandler.bind(this)
   }
 
@@ -42,6 +44,21 @@ class ThreadsHandler {
       }
     })
     response.code(201)
+    return response
+  }
+
+  async getThreadByIdHandler (request, h) {
+    const getThreadByIdUseCase = this._container.getInstance(GetThreadByIdUseCase.name)
+
+    const { id: threadId } = request.params
+    const thread = await getThreadByIdUseCase.execute(threadId)
+
+    const response = h.response({
+      status: 'success',
+      data: {
+        thread
+      }
+    })
     return response
   }
 

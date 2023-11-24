@@ -23,6 +23,15 @@ const CommentsTableTestHelper = {
     return result.rows
   },
 
+  async deleteComment (threadId, commentId) {
+    const query = {
+      text: 'UPDATE comments SET is_delete = true WHERE id = $1 AND thread_id = $2',
+      values: [commentId, threadId]
+    }
+
+    await pool.query(query)
+  },
+
   async cleanTable () {
     await pool.query('DELETE FROM comments WHERE 1=1')
   }

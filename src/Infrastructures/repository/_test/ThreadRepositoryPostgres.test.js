@@ -120,7 +120,7 @@ describe('ThreadRepository postgres', () => {
       const addedComment = threadRepositoryPostgres.addThreadCommentsById(owner, threadId, content)
 
       // Assert
-      expect(addedComment).rejects.toThrowError(NotFoundError)
+      await expect(addedComment).rejects.toThrowError(NotFoundError)
     })
   })
 
@@ -158,7 +158,7 @@ describe('ThreadRepository postgres', () => {
       const result = threadRepositoryPostgres.deleteThreadComments('user-123', 'thread-122', 'comment-123')
 
       // Assert
-      expect(result).rejects.toThrowError(NotFoundError)
+      await expect(result).rejects.toThrowError(NotFoundError)
     })
 
     it('should throw NotFoundError when comment not found', async () => {
@@ -174,7 +174,7 @@ describe('ThreadRepository postgres', () => {
       const result = threadRepositoryPostgres.deleteThreadComments('user-123', 'thread-123', 'comment-122')
 
       // Assert
-      expect(result).rejects.toThrowError(NotFoundError)
+      await expect(result).rejects.toThrowError(NotFoundError)
     })
 
     it('should throw AuthorizationError when user not owner', async () => {
@@ -213,11 +213,44 @@ describe('ThreadRepository postgres', () => {
       await CommentsTableTestHelper.addComments({ id: commentId, owner: commentOwner })
 
       // Action
-      await threadRepositoryPostgres.getThreadById(threadOwner, threadId)
+      const threadDetail = await threadRepositoryPostgres.getThreadById(threadId)
 
       // Assert
-      const threadDetail = await ThreadsTableTestHelper.findThreadsById(threadId, threadOwner)
-      expect(threadDetail).toHaveLength(1)
+      expect(threadDetail.id).toEqual(threadId)
+    })
+
+    it('should change comment content into **komentar telah dihapus** if comment is deleted', async () => {
+      // Arrange
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: threadOwner, username: 'dicoding' })
+      await UsersTableTestHelper.addUser({ id: commentOwner, username: 'john' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+      await CommentsTableTestHelper.addComments({ id: commentId, owner: commentOwner })
+      await CommentsTableTestHelper.deleteComment(threadId, commentId)
+
+      // Action
+      const threadDetail = await threadRepositoryPostgres.getThreadById(threadId)
+
+      // Assert
+      const deletedComment = threadDetail.comments.find((comment) => comment.id === commentId)
+      expect(deletedComment.content).toEqual('**komentar telah dihapus**')
+    })
+
+    it('should throw NotFoundError when thread not found', async () => {
+      // Arrange
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: threadOwner, username: 'dicoding' })
+      await UsersTableTestHelper.addUser({ id: commentOwner, username: 'john' })
+
+      // Action
+      const result = threadRepositoryPostgres.getThreadById('thread-122')
+
+      // Assert
+      await expect(result).rejects.toThrowError(NotFoundError)
     })
   })
 })

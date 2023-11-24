@@ -3,8 +3,8 @@ class GetThreadByIdUseCase {
     this._threadRepository = threadRepository
   }
 
-  async execute (owner, threadId) {
-    return await this._threadRepository.getThreadById(owner, threadId)
+  async execute (threadId) {
+    return await this._threadRepository.getThreadById(threadId)
   }
 }
 
