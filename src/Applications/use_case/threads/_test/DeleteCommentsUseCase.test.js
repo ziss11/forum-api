@@ -14,6 +14,10 @@ describe('DeleteCommentsUseCase', () => {
 
     const mockThreadRepository = new ThreadRepository()
 
+    mockThreadRepository.verifyThreadAvailability = jest.fn()
+      .mockImplementation(() => Promise.resolve())
+    mockThreadRepository.verifyCommentOwner = jest.fn()
+      .mockImplementation(() => Promise.resolve())
     mockThreadRepository.deleteThreadComments = jest.fn()
       .mockImplementation(() => Promise.resolve(mockDeletedCommentsResponse))
 
@@ -28,6 +32,8 @@ describe('DeleteCommentsUseCase', () => {
     expect(deletedCommentsResponse).toStrictEqual({
       status: 'success'
     })
+    expect(mockThreadRepository.verifyThreadAvailability).toBeCalledWith(threadId)
+    expect(mockThreadRepository.verifyCommentOwner).toBeCalledWith(commentId, owner)
     expect(mockThreadRepository.deleteThreadComments).toBeCalledWith(owner, threadId, commentId)
   })
 })

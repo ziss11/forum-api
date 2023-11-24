@@ -13,6 +13,19 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     this._idGenerator = idGenerator
   }
 
+  async verifyThreadAvailability (threadId) {
+    const query = {
+      text: 'SELECT * FROM threads WHERE id = $1',
+      values: [threadId]
+    }
+
+    const result = await this._pool.query(query)
+
+    if (!result.rowCount) {
+      throw new NotFoundError('thread tidak ditemukan')
+    }
+  }
+
   async verifyCommentOwner (commentId, owner) {
     const query = {
       text: 'SELECT * FROM comments WHERE id = $1',
@@ -29,19 +42,6 @@ class ThreadRepositoryPostgres extends ThreadRepository {
 
     if (owner !== comment.owner) {
       throw new AuthorizationError('anda tidak berhak mengakses resource ini')
-    }
-  }
-
-  async verifyThreadAvailability (threadId) {
-    const query = {
-      text: 'SELECT * FROM threads WHERE id = $1',
-      values: [threadId]
-    }
-
-    const result = await this._pool.query(query)
-
-    if (!result.rowCount) {
-      throw new NotFoundError('thread tidak ditemukan')
     }
   }
 
