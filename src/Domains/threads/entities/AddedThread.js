@@ -1,13 +1,13 @@
 class AddedThread {
   constructor (payload) {
-    this._verifyPayload(payload)
+    this._validatePayload(payload)
 
     this.id = payload.id
     this.title = payload.title
     this.owner = payload.owner
   }
 
-  _verifyPayload (payload) {
+  _validatePayload (payload) {
     const { id, title, owner } = payload
 
     if (!id || !title || !owner) {

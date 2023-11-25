@@ -1,12 +1,12 @@
 class NewThread {
   constructor (payload) {
-    this._verifyPayload(payload)
+    this._validatePayload(payload)
 
     this.title = payload.title
     this.body = payload.body
   }
 
-  _verifyPayload (payload) {
+  _validatePayload (payload) {
     const { title, body } = payload
 
     if (!title || !body) {

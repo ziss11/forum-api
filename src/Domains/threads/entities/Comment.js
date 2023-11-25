@@ -1,6 +1,6 @@
 class Comment {
   constructor (payload) {
-    this._verifyPayload(payload)
+    this._validatePayload(payload)
 
     this.id = payload.id
     this.username = payload.username
@@ -8,7 +8,7 @@ class Comment {
     this.content = payload.content
   }
 
-  _verifyPayload (payload) {
+  _validatePayload (payload) {
     const { id, username, date, content } = payload
 
     if (!id || !username || !date || !content) {

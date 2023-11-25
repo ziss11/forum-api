@@ -1,13 +1,13 @@
 class AddedComments {
   constructor (payload) {
-    this._verifyPayload(payload)
+    this._validatePayload(payload)
 
     this.id = payload.id
     this.content = payload.content
     this.owner = payload.owner
   }
 
-  _verifyPayload (payload) {
+  _validatePayload (payload) {
     const { id, content, owner } = payload
 
     if (!id || !content || !owner) {

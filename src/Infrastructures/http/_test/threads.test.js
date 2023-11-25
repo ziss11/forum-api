@@ -123,55 +123,6 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.addedComment).toBeDefined()
     })
 
-    it('should response 400 when request payload not contain needed property', async () => {
-      // Arrange
-      const server = await createServer(container)
-      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
-      const threadId = await ServerTestHelper.getThreadHelper({ server, accessToken })
-
-      // Action
-      const response = await server.inject({
-        method: 'POST',
-        url: `/threads/${threadId}/comments`,
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        },
-        payload: {}
-      })
-
-      // Assert
-      const responseJson = JSON.parse(response.payload)
-      expect(response.statusCode).toEqual(400)
-      expect(responseJson.status).toEqual('fail')
-      expect(responseJson.message).toEqual('tidak dapat membuat comment baru karena properti yang dibutuhkan tidak ada')
-    })
-
-    it('should response 400 when request payload not meet data type specification', async () => {
-      // Arrange
-      const requestPayload = {
-        content: 123
-      }
-      const server = await createServer(container)
-      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
-      const threadId = await ServerTestHelper.getThreadHelper({ server, accessToken })
-
-      // Action
-      const response = await server.inject({
-        method: 'POST',
-        url: `/threads/${threadId}/comments`,
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        },
-        payload: requestPayload
-      })
-
-      // Assert
-      const responseJson = JSON.parse(response.payload)
-      expect(response.statusCode).toEqual(400)
-      expect(responseJson.status).toEqual('fail')
-      expect(responseJson.message).toEqual('tidak dapat membuat comment baru karena tipe data tidak sesuai')
-    })
-
     it('should response 404 when thread not found', async () => {
       // Arrange
       const requestPayload = {

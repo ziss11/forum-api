@@ -8,7 +8,7 @@ class RefreshAuthenticationUseCase {
   }
 
   async execute (useCasePayload) {
-    this._verifyPayload(useCasePayload)
+    this._validatePayload(useCasePayload)
     const { refreshToken } = useCasePayload
 
     await this._authenticationTokenManager.verifyRefreshToken(refreshToken)
@@ -19,7 +19,7 @@ class RefreshAuthenticationUseCase {
     return this._authenticationTokenManager.createAccessToken({ username, id })
   }
 
-  _verifyPayload (payload) {
+  _validatePayload (payload) {
     const { refreshToken } = payload
 
     if (!refreshToken) {

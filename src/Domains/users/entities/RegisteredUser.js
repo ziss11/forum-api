@@ -1,6 +1,6 @@
 class RegisteredUser {
   constructor (payload) {
-    this._verifyPayload(payload)
+    this._validatePayload(payload)
 
     const { id, username, fullname } = payload
 
@@ -9,7 +9,7 @@ class RegisteredUser {
     this.fullname = fullname
   }
 
-  _verifyPayload ({ id, username, fullname }) {
+  _validatePayload ({ id, username, fullname }) {
     if (!id || !username || !fullname) {
       throw new Error('REGISTERED_USER.NOT_CONTAIN_NEEDED_PROPERTY')
     }
