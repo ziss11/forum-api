@@ -1,6 +1,6 @@
+const pool = require('../../database/postgres/pool')
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper')
 const ThreadRepositoryPostgres = require('../ThreadRepositoryPostgres')
-const pool = require('../../database/postgres/pool')
 const NewThread = require('../../../Domains/threads/entities/NewThread')
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper')
 const AddedThread = require('../../../Domains/threads/entities/AddedThread')
@@ -8,12 +8,14 @@ const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelp
 const AddedComments = require('../../../Domains/threads/entities/AddedComments')
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError')
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError')
+const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper')
 
 describe('ThreadRepository postgres', () => {
   afterEach(async () => {
     await UsersTableTestHelper.cleanTable()
     await ThreadsTableTestHelper.cleanTable()
     await CommentsTableTestHelper.cleanTable()
+    await RepliesTableTestHelper.cleanTable()
   })
 
   afterAll(async () => {
@@ -230,6 +232,31 @@ describe('ThreadRepository postgres', () => {
       // Assert
       const deletedComment = threadDetail.comments.find((comment) => comment.id === commentId)
       expect(deletedComment.content).toEqual('**komentar telah dihapus**')
+    })
+  })
+
+  describe('addCommentsReply', () => {
+    const owner = 'user-123'
+    const threadId = 'thread-123'
+    const commentId = 'comment-123'
+    const replyId = 'reply-123'
+
+    it('should persist add reply comments and return added reply correctly', async () => {
+      // Arrange
+      const content = 'sebuah balasan'
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: owner, username: 'dicoding' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+      await CommentsTableTestHelper.addComments({ id: commentId })
+
+      // Action
+      await threadRepositoryPostgres.addCommentsReply({ owner, commentId, content })
+
+      // Assert
+      const comment = await RepliesTableTestHelper.findReplyById(replyId)
+      expect(comment).toHaveLength(1)
     })
   })
 })

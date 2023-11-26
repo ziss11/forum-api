@@ -5,6 +5,7 @@ const ThreadDetail = require('../../Domains/threads/entities/ThreadDetail')
 const Comment = require('../../Domains/threads/entities/Comment')
 const NotFoundError = require('../../Commons/exceptions/NotFoundError')
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError')
+const AddedReply = require('../../Domains/threads/entities/AddedReply')
 
 class ThreadRepositoryPostgres extends ThreadRepository {
   constructor (pool, idGenerator) {
@@ -112,6 +113,22 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       content: comment.comment_is_delete ? '**komentar telah dihapus**' : comment.content
     }))
     return new ThreadDetail({ id, title, body, date, username, comments })
+  }
+
+  async addCommentsReply (payload) {
+    const { owner, commentId, content } = payload
+
+    const id = `reply-${this._idGenerator()}`
+    const date = new Date().toISOString()
+
+    const query = {
+      text: 'INSERT INTO replies VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, content, owner',
+      values: [id, owner, commentId, content, date, false]
+    }
+
+    const result = await this._pool.query(query)
+
+    return new AddedReply({ ...result.rows[0] })
   }
 }
 
