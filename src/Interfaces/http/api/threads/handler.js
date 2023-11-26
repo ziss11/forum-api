@@ -2,6 +2,7 @@ const AddThreadUseCase = require('../../../../Applications/use_case/threads/AddT
 const DeleteCommentsUseCase = require('../../../../Applications/use_case/threads/DeleteCommentsUseCase')
 const GetThreadByIdUseCase = require('../../../../Applications/use_case/threads/GetThreadByIdUseCase')
 const AddCommentsUseCase = require('../../../../Applications/use_case/threads/AddCommentsUseCase')
+const AddCommentsReplyUseCase = require('../../../../Applications/use_case/threads/AddCommentsReplyUseCase')
 
 class ThreadsHandler {
   constructor (container) {
@@ -11,6 +12,7 @@ class ThreadsHandler {
     this.postThreadCommentsHandler = this.postThreadCommentsHandler.bind(this)
     this.getThreadByIdHandler = this.getThreadByIdHandler.bind(this)
     this.deleteThreadCommentsHandler = this.deleteThreadCommentsHandler.bind(this)
+    this.addCommentsReplyHandler = this.addCommentsReplyHandler.bind(this)
   }
 
   async postThreadHandler (request, h) {
@@ -74,6 +76,25 @@ class ThreadsHandler {
       status: 'success',
       message: 'Comment deleted successfully'
     })
+    return response
+  }
+
+  async addCommentsReplyHandler (request, h) {
+    const addCommentsReplyUseCase = this._container.getInstance(AddCommentsReplyUseCase.name)
+
+    const { id: owner } = request.auth.credentials
+    const { threadId, commentId } = request.params
+    const { content } = request.payload
+
+    const addedReply = await addCommentsReplyUseCase.execute({ owner, threadId, commentId, content })
+
+    const response = h.response({
+      status: 'success',
+      data: {
+        addedReply
+      }
+    })
+    response.code(201)
     return response
   }
 }

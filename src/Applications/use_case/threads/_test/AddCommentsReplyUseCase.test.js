@@ -1,8 +1,39 @@
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository')
-const AddReplyUseCase = require('../AddReplyUseCase')
+const AddCommentsReplyUseCase = require('../AddCommentsReplyUseCase')
 const AddedReply = require('../../../../Domains/threads/entities/AddedReply')
 
-describe('AddReplyUseCase', () => {
+describe('AddCommentsReplyUseCase', () => {
+  it('should throw error if use case payload not contain content', async () => {
+    // Arrange
+    const useCasePayload = {
+      owner: 'user-123',
+      threadId: 'thread-123',
+      commentId: 'comment-123'
+    }
+    const addCommentsReplyUseCase = new AddCommentsReplyUseCase({})
+
+    // Action & Assert
+    await expect(addCommentsReplyUseCase.execute(useCasePayload))
+      .rejects
+      .toThrowError('ADD_COMMENTS_REPLY_USE_CASE.NOT_CONTAIN_NEEDED_PROPERTY')
+  })
+
+  it('should throw error if content not string', async () => {
+    // Arrange
+    const useCasePayload = {
+      owner: 'user-123',
+      threadId: 'thread-123',
+      commentId: 'comment-123',
+      content: 123
+    }
+    const addCommentsReplyUseCase = new AddCommentsReplyUseCase({})
+
+    // Action & Assert
+    await expect(addCommentsReplyUseCase.execute(useCasePayload))
+      .rejects
+      .toThrowError('ADD_COMMENTS_REPLY_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION')
+  })
+
   it('should orchestrating the add reply action correctly', async () => {
     // Arrange
     const useCasePayload = {
@@ -26,7 +57,7 @@ describe('AddReplyUseCase', () => {
     mockThreadRepository.addCommentsReply = jest.fn()
       .mockImplementation(() => Promise.resolve(mockAddedReply))
 
-    const getThreadUseCase = new AddReplyUseCase({
+    const getThreadUseCase = new AddCommentsReplyUseCase({
       threadRepository: mockThreadRepository
     })
 
@@ -41,7 +72,7 @@ describe('AddReplyUseCase', () => {
       owner
     }))
     expect(mockThreadRepository.verifyThreadAvailability).toBeCalledWith(threadId)
-    expect(mockThreadRepository.verifyCommentAvailability).toBeCalledWith(threadId, commentId)
+    expect(mockThreadRepository.verifyCommentAvailability).toBeCalledWith(commentId)
     expect(mockThreadRepository.addCommentsReply).toBeCalledWith({ owner, commentId, content })
   })
 })

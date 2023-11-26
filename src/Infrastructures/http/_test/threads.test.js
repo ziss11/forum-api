@@ -1,5 +1,6 @@
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper')
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper')
+const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper')
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper')
 const ServerTestHelper = require('../../../../tests/ServerTestHelper')
 const pool = require('../../database/postgres/pool')
@@ -15,6 +16,7 @@ describe('/threads endpoint', () => {
     await UsersTableTestHelper.cleanTable()
     await ThreadsTableTestHelper.cleanTable()
     await CommentsTableTestHelper.cleanTable()
+    await RepliesTableTestHelper.cleanTable()
   })
 
   describe('when POST /threads', () => {
@@ -267,6 +269,7 @@ describe('/threads endpoint', () => {
       // Arrange
       const server = await createServer(container)
       const threadId = 'thread-122'
+
       // Action
       const response = await server.inject({
         method: 'GET',
@@ -277,6 +280,83 @@ describe('/threads endpoint', () => {
       const responseJson = JSON.parse(response.payload)
       expect(response.statusCode).toEqual(404)
       expect(responseJson.status).toEqual('fail')
+    })
+  })
+
+  describe('when GET /threads/{threadId}/comments/{commentId}/replies', () => {
+    it('should response 400 when payload not contain content', async () => {
+      // Arrange
+      const server = await createServer(container)
+      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
+      const threadId = await ServerTestHelper.getThreadHelper({ server, accessToken })
+      const commentId = await ServerTestHelper.getCommentHelper({ server, accessToken, threadId })
+
+      // Action
+      const response = await server.inject({
+        method: 'POST',
+        url: `/threads/${threadId}/comments/${commentId}/replies`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        },
+        payload: {}
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(400)
+      expect(responseJson.status).toEqual('fail')
+    })
+
+    it('should response 404 when thread or comment not found', async () => {
+      // Arrange
+      const server = await createServer(container)
+      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
+      const threadId = 'thread-122'
+      const commentId = 'comment-122'
+
+      // Action
+      const response = await server.inject({
+        method: 'POST',
+        url: `/threads/${threadId}/comments/${commentId}/replies`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        },
+        payload: { content: 'sebuah balasan' }
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(404)
+      expect(responseJson.status).toEqual('fail')
+    })
+
+    it('should response 201 and persisted comment reply', async () => {
+      // Arrange
+      const requestPayload = {
+        content: 'sebuah balasan'
+      }
+
+      const server = await createServer(container)
+      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
+      const threadId = await ServerTestHelper.getThreadHelper({ server, accessToken })
+      const commentId = await ServerTestHelper.getCommentHelper({ server, accessToken, threadId })
+
+      // Action
+      const response = await server.inject({
+        method: 'POST',
+        url: `/threads/${threadId}/comments/${commentId}/replies`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        },
+        payload: requestPayload
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      console.log(responseJson)
+      expect(response.statusCode).toEqual(201)
+      expect(responseJson.status).toEqual('success')
+      expect(responseJson.data.addedReply).toBeDefined()
     })
   })
 })
