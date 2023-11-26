@@ -37,7 +37,7 @@ class ThreadsHandler {
     const { id: owner } = request.auth.credentials
     const { id: threadId } = request.params
     const { content } = request.payload
-    const addedComment = await addCommentsUseCase.execute(owner, threadId, content)
+    const addedComment = await addCommentsUseCase.execute({ owner, threadId, content })
 
     const response = h.response({
       status: 'success',
