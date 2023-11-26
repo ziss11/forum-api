@@ -26,7 +26,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     }
   }
 
-  async verifyCommentOwner (commentId, owner) {
+  async verifyCommentAvailability (commentId) {
     const query = {
       text: 'SELECT * FROM comments WHERE id = $1',
       values: [commentId]
@@ -38,7 +38,11 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       throw new NotFoundError('comment tidak ditemukan')
     }
 
-    const comment = result.rows[0]
+    return result.rows[0]
+  }
+
+  async verifyCommentOwner (commentId, owner) {
+    const comment = await this.verifyCommentAvailability(commentId)
 
     if (owner !== comment.owner) {
       throw new AuthorizationError('anda tidak berhak mengakses resource ini')

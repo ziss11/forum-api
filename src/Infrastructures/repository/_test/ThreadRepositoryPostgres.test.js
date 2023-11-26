@@ -38,24 +38,28 @@ describe('ThreadRepository postgres', () => {
     })
   })
 
-  describe('verifyCommentOwner function', () => {
+  describe('verifyCommentAvailability function', () => {
     it('should throw NotFoundError when comment not found', async () => {
       // Arrange
       const owner = 'user-123'
       const threadId = 'thread-123'
+      const commentId = 'comment-123'
       const fakeIdGenerator = () => 123
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
 
       await UsersTableTestHelper.addUser({ id: owner, username: 'dicoding' })
       await ThreadsTableTestHelper.addThread({ id: threadId })
+      await CommentsTableTestHelper.addComments({ id: commentId })
 
       // Action
-      const addedComment = threadRepositoryPostgres.verifyCommentOwner('comment-321', owner)
+      const addedComment = threadRepositoryPostgres.verifyCommentAvailability(threadId, commentId)
 
       // Assert
       await expect(addedComment).rejects.toThrowError(NotFoundError)
     })
+  })
 
+  describe('verifyCommentOwner function', () => {
     it('should throw AuthorizationError when user not owner', async () => {
       // Arrange
       const threadId = 'thread-123'
