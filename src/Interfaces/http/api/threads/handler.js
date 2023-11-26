@@ -1,7 +1,7 @@
 const AddThreadUseCase = require('../../../../Applications/use_case/threads/AddThreadUseCase')
-const AddCommentsByIdUseCase = require('../../../../Applications/use_case/threads/AddCommentsByIdUseCase.js')
 const DeleteCommentsUseCase = require('../../../../Applications/use_case/threads/DeleteCommentsUseCase')
 const GetThreadByIdUseCase = require('../../../../Applications/use_case/threads/GetThreadByIdUseCase')
+const AddCommentsUseCase = require('../../../../Applications/use_case/threads/AddCommentsUseCase')
 
 class ThreadsHandler {
   constructor (container) {
@@ -30,12 +30,12 @@ class ThreadsHandler {
   }
 
   async postThreadCommentsHandler (request, h) {
-    const addCommentsByIdUseCase = this._container.getInstance(AddCommentsByIdUseCase.name)
+    const addCommentsUseCase = this._container.getInstance(AddCommentsUseCase.name)
 
     const { id: owner } = request.auth.credentials
     const { id: threadId } = request.params
     const { content } = request.payload
-    const addedComment = await addCommentsByIdUseCase.execute(owner, threadId, content)
+    const addedComment = await addCommentsUseCase.execute(owner, threadId, content)
 
     const response = h.response({
       status: 'success',

@@ -1,8 +1,8 @@
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository')
 const AddedComments = require('../../../../Domains/threads/entities/AddedComments')
-const AddCommentsByIdUseCase = require('../AddCommentsByIdUseCase')
+const AddCommentsUseCase = require('../AddCommentsUseCase')
 
-describe('AddCommentsById', () => {
+describe('AddComments', () => {
   it('should orchestrating the add thread action correctly', async () => {
     // Arrange
     const useCasePayload = {
@@ -23,7 +23,7 @@ describe('AddCommentsById', () => {
     mockThreadRepository.addThreadCommentsById = jest.fn()
       .mockImplementation(() => Promise.resolve(mockAddedComments))
 
-    const getThreadUseCase = new AddCommentsByIdUseCase({
+    const getThreadUseCase = new AddCommentsUseCase({
       threadRepository: mockThreadRepository
     })
 

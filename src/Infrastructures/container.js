@@ -26,7 +26,7 @@ const RefreshAuthenticationUseCase = require('../Applications/use_case/authentic
 const ThreadRepository = require('../Domains/threads/ThreadRepository')
 const ThreadRepositoryPostgres = require('./repository/ThreadRepositoryPostgres')
 const AddThreadUseCase = require('../Applications/use_case/threads/AddThreadUseCase')
-const AddCommentsByIdUseCase = require('../Applications/use_case/threads/AddCommentsByIdUseCase')
+const AddCommentsUseCase = require('../Applications/use_case/threads/AddCommentsUseCase')
 const DeleteCommentsUseCase = require('../Applications/use_case/threads/DeleteCommentsUseCase')
 const GetThreadByIdUseCase = require('../Applications/use_case/threads/GetThreadByIdUseCase')
 
@@ -186,8 +186,8 @@ container.register([
     }
   },
   {
-    key: AddCommentsByIdUseCase.name,
-    Class: AddCommentsByIdUseCase,
+    key: AddCommentsUseCase.name,
+    Class: AddCommentsUseCase,
     parameter: {
       injectType: 'destructuring',
       dependencies: [

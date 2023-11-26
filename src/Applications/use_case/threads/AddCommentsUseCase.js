@@ -1,4 +1,4 @@
-class AddCommentsByIdUseCase {
+class AddCommentsUseCase {
   constructor ({ threadRepository }) {
     this._threadRepository = threadRepository
   }
@@ -9,4 +9,4 @@ class AddCommentsByIdUseCase {
   }
 }
 
-module.exports = AddCommentsByIdUseCase
+module.exports = AddCommentsUseCase
