@@ -19,7 +19,8 @@ describe('a Comment entities', () => {
       id: true,
       username: 123,
       date: 123,
-      content: 123
+      content: 123,
+      replies: '123'
     }
 
     // Action and Assert
@@ -32,16 +33,18 @@ describe('a Comment entities', () => {
       id: 'id-123',
       username: 'username',
       date: 'date',
-      content: 'content'
+      content: 'content',
+      replies: []
     }
 
     // Action
-    const { id, username, date, content } = new Comment(payload)
+    const { id, username, date, content, replies } = new Comment(payload)
 
     // Assert
     expect(id).toEqual(payload.id)
     expect(username).toEqual(payload.username)
     expect(date).toEqual(payload.date)
     expect(content).toEqual(payload.content)
+    expect(replies).toEqual(payload.replies)
   })
 })

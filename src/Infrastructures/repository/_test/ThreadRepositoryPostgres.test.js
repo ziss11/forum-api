@@ -197,6 +197,7 @@ describe('ThreadRepository postgres', () => {
     const commentOwner = 'user-321'
     const threadId = 'thread-123'
     const commentId = 'comment-123'
+    const replyId = 'reply-123'
 
     it('should get thread by id and return thread detail correctly', async () => {
       // Arrange
@@ -207,6 +208,7 @@ describe('ThreadRepository postgres', () => {
       await UsersTableTestHelper.addUser({ id: commentOwner, username: 'john' })
       await ThreadsTableTestHelper.addThread({ id: threadId })
       await CommentsTableTestHelper.addComments({ id: commentId, owner: commentOwner })
+      await RepliesTableTestHelper.addReply({ id: replyId, owner: commentOwner, commentId })
 
       // Action
       const threadDetail = await threadRepositoryPostgres.getThreadById(threadId)
@@ -224,6 +226,7 @@ describe('ThreadRepository postgres', () => {
       await UsersTableTestHelper.addUser({ id: commentOwner, username: 'john' })
       await ThreadsTableTestHelper.addThread({ id: threadId })
       await CommentsTableTestHelper.addComments({ id: commentId, owner: commentOwner })
+      await RepliesTableTestHelper.addReply({ id: replyId, owner: commentOwner, commentId })
       await CommentsTableTestHelper.deleteComment(threadId, commentId)
 
       // Action
@@ -232,6 +235,26 @@ describe('ThreadRepository postgres', () => {
       // Assert
       const deletedComment = threadDetail.comments.find((comment) => comment.id === commentId)
       expect(deletedComment.content).toEqual('**komentar telah dihapus**')
+    })
+
+    it('should change reply content into **balasan telah dihapus** if reply is deleted', async () => {
+      // Arrange
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: threadOwner, username: 'dicoding' })
+      await UsersTableTestHelper.addUser({ id: commentOwner, username: 'john' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+      await CommentsTableTestHelper.addComments({ id: commentId, owner: commentOwner })
+      await RepliesTableTestHelper.addReply({ id: replyId, owner: commentOwner, commentId })
+      await RepliesTableTestHelper.deleteCommentReply(commentId, replyId)
+
+      // Action
+      const threadDetail = await threadRepositoryPostgres.getThreadById(threadId)
+
+      // Assert
+      const deletedReply = threadDetail.comments[0].replies.find((reply) => reply.id === replyId)
+      expect(deletedReply.content).toEqual('**balasan telah dihapus**')
     })
   })
 

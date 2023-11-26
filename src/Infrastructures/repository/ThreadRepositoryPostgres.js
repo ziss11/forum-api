@@ -6,6 +6,7 @@ const Comment = require('../../Domains/threads/entities/Comment')
 const NotFoundError = require('../../Commons/exceptions/NotFoundError')
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError')
 const AddedReply = require('../../Domains/threads/entities/AddedReply')
+const CommentReply = require('../../Domains/threads/entities/CommentReply')
 
 class ThreadRepositoryPostgres extends ThreadRepository {
   constructor (pool, idGenerator) {
@@ -91,11 +92,15 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     const query = {
       text: `SELECT threads.id, threads.title, threads.body, threads.date AS thread_date,
       thread_owner.username AS thread_owner_username, comments.id AS comment_id, comments.content,
-      comments.date AS comment_date, comments.is_delete AS comment_is_delete, comment_owner.username AS comment_owner_username FROM threads
+      comments.date AS comment_date, comments.is_delete AS comment_is_delete,
+      comment_owner.username AS comment_owner_username, replies.id AS reply_id, replies.content AS reply_content,
+      replies.date AS reply_date, replies.is_delete AS reply_is_delete, reply_owner.username AS reply_owner_username FROM threads
       LEFT JOIN users AS thread_owner ON threads.owner = thread_owner.id
       LEFT JOIN comments ON threads.id = comments.thread_id
       LEFT JOIN users AS comment_owner ON comments.owner = comment_owner.id
-      WHERE threads.id = $1 ORDER BY comments.date ASC`,
+      LEFT JOIN replies ON comments.id = replies.comment_id
+      LEFT JOIN users AS reply_owner ON replies.owner = reply_owner.id
+      WHERE threads.id = $1 ORDER BY comments.date ASC, replies.date ASC`,
       values: [threadId]
     }
 
@@ -105,14 +110,43 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       throw new NotFoundError('thread tidak ditemukan')
     }
 
-    const { id, title, body, thread_owner_username: username, thread_date: date } = result.rows[0]
-    const comments = result.rows.map((comment) => new Comment({
-      id: comment.comment_id,
-      username: comment.comment_owner_username,
-      date: comment.comment_date,
-      content: comment.comment_is_delete ? '**komentar telah dihapus**' : comment.content
-    }))
-    return new ThreadDetail({ id, title, body, date, username, comments })
+    const threadInfo = {
+      id: result.rows[0].id,
+      title: result.rows[0].title,
+      body: result.rows[0].body,
+      date: result.rows[0].thread_date,
+      username: result.rows[0].thread_owner_username
+    }
+    const commentList = result.rows.reduce((acc, row) => {
+      const commentId = row.comment_id
+
+      if (!acc.has(commentId)) {
+        const comment = {
+          id: commentId,
+          username: row.comment_owner_username,
+          date: row.comment_date,
+          content: row.comment_is_delete ? '**komentar telah dihapus**' : row.content,
+          replies: []
+        }
+        acc.set(commentId, comment)
+      }
+
+      if (row.reply_id) {
+        const reply = new CommentReply({
+          id: row.reply_id,
+          username: row.reply_owner_username,
+          date: row.reply_date,
+          content: row.reply_is_delete ? '**balasan telah dihapus**' : row.reply_content
+        })
+        acc.get(commentId).replies.push(reply)
+      }
+
+      return acc
+    }, new Map())
+
+    const comments = [...commentList.values()].map(comment => new Comment(comment))
+
+    return new ThreadDetail({ ...threadInfo, comments })
   }
 
   async addCommentsReply (payload) {

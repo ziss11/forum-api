@@ -6,6 +6,7 @@ class Comment {
     this.username = payload.username
     this.date = payload.date
     this.content = payload.content
+    this.replies = payload.replies
   }
 
   _validatePayload (payload) {
@@ -16,7 +17,7 @@ class Comment {
     }
 
     if (typeof id !== 'string' || typeof username !== 'string' ||
-          typeof date !== 'string' || typeof content !== 'string') {
+      typeof date !== 'string' || typeof content !== 'string') {
       throw new Error('COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION')
     }
   }
