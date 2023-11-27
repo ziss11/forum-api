@@ -248,8 +248,9 @@ describe('/threads endpoint', () => {
       const server = await createServer(container)
       const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
       const threadId = await ServerTestHelper.getThreadHelper({ server, accessToken })
-      const commentId = await ServerTestHelper.getCommentHelper({ server, accessToken, threadId })
-      await ServerTestHelper.deleteThreadCommentHandler({ server, accessToken, threadId, commentId })
+      const commentId1 = await ServerTestHelper.getCommentHelper({ server, accessToken, threadId })
+      await ServerTestHelper.getCommentHelper({ server, accessToken, threadId })
+      await ServerTestHelper.deleteThreadCommentHandler({ server, accessToken, threadId, commentId: commentId1 })
 
       // Action
       const response = await server.inject({
@@ -259,10 +260,13 @@ describe('/threads endpoint', () => {
 
       // Assert
       const responseJson = JSON.parse(response.payload)
-      const deletedComment = responseJson.data.thread.comments.find((comment) => comment.id === commentId)
       expect(response.statusCode).toEqual(200)
       expect(responseJson.status).toEqual('success')
-      expect(deletedComment.content).toEqual('**komentar telah dihapus**')
+      expect(responseJson.data.thread.comments).toHaveLength(2)
+
+      const [comment1, comment2] = responseJson.data.thread.comments
+      expect(comment1.content).toEqual('**komentar telah dihapus**')
+      expect(comment2.content).toEqual('thread comment')
     })
 
     it('should show **balasan telah dihapus** when get deleted reply', async () => {
@@ -271,8 +275,11 @@ describe('/threads endpoint', () => {
       const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
       const threadId = await ServerTestHelper.getThreadHelper({ server, accessToken })
       const commentId = await ServerTestHelper.getCommentHelper({ server, accessToken, threadId })
-      const replyId = await ServerTestHelper.getReplyHelper({ server, accessToken, threadId, commentId })
-      await ServerTestHelper.deleteCommentsReplyHandler({ server, accessToken, threadId, commentId, replyId })
+      await ServerTestHelper.getCommentHelper({ server, accessToken, threadId })
+
+      const replyId1 = await ServerTestHelper.getReplyHelper({ server, accessToken, threadId, commentId })
+      await ServerTestHelper.getReplyHelper({ server, accessToken, threadId, commentId })
+      await ServerTestHelper.deleteCommentsReplyHandler({ server, accessToken, threadId, commentId, replyId: replyId1 })
 
       // Action
       const response = await server.inject({
@@ -282,10 +289,14 @@ describe('/threads endpoint', () => {
 
       // Assert
       const responseJson = JSON.parse(response.payload)
-      const deletedReply = responseJson.data.thread.comments[0].replies.find((reply) => reply.id === replyId)
       expect(response.statusCode).toEqual(200)
       expect(responseJson.status).toEqual('success')
-      expect(deletedReply.content).toEqual('**balasan telah dihapus**')
+      expect(responseJson.data.thread.comments).toHaveLength(2)
+
+      const comments = responseJson.data.thread.comments
+      const [reply1, reply2] = comments[0].replies
+      expect(reply1.content).toEqual('**balasan telah dihapus**')
+      expect(reply2.content).toEqual('thread comment reply')
     })
 
     it('should response 404 when thread not found', async () => {
