@@ -97,6 +97,16 @@ const ServerTestHelper = {
         Authorization: `Bearer ${accessToken}`
       }
     })
+  },
+
+  async deleteCommentsReplyHandler ({ server, accessToken, threadId, commentId, replyId }) {
+    await server.inject({
+      method: 'DELETE',
+      url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
   }
 }
 

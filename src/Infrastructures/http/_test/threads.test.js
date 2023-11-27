@@ -265,6 +265,29 @@ describe('/threads endpoint', () => {
       expect(deletedComment.content).toEqual('**komentar telah dihapus**')
     })
 
+    it('should show **balasan telah dihapus** when get deleted reply', async () => {
+      // Arrange
+      const server = await createServer(container)
+      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
+      const threadId = await ServerTestHelper.getThreadHelper({ server, accessToken })
+      const commentId = await ServerTestHelper.getCommentHelper({ server, accessToken, threadId })
+      const replyId = await ServerTestHelper.getReplyHelper({ server, accessToken, threadId, commentId })
+      await ServerTestHelper.deleteCommentsReplyHandler({ server, accessToken, threadId, commentId, replyId })
+
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: `/threads/${threadId}`
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      const deletedReply = responseJson.data.thread.comments[0].replies.find((reply) => reply.id === replyId)
+      expect(response.statusCode).toEqual(200)
+      expect(responseJson.status).toEqual('success')
+      expect(deletedReply.content).toEqual('**balasan telah dihapus**')
+    })
+
     it('should response 404 when thread not found', async () => {
       // Arrange
       const server = await createServer(container)
