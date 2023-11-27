@@ -3,6 +3,7 @@ const DeleteCommentsUseCase = require('../../../../Applications/use_case/threads
 const GetThreadByIdUseCase = require('../../../../Applications/use_case/threads/GetThreadByIdUseCase')
 const AddCommentsUseCase = require('../../../../Applications/use_case/threads/AddCommentsUseCase')
 const AddCommentsReplyUseCase = require('../../../../Applications/use_case/threads/AddCommentsReplyUseCase')
+const DeleteCommentsReplyUseCase = require('../../../../Applications/use_case/threads/DeleteCommentsReplyUseCase')
 
 class ThreadsHandler {
   constructor (container) {
@@ -13,6 +14,7 @@ class ThreadsHandler {
     this.getThreadByIdHandler = this.getThreadByIdHandler.bind(this)
     this.deleteThreadCommentsHandler = this.deleteThreadCommentsHandler.bind(this)
     this.addCommentsReplyHandler = this.addCommentsReplyHandler.bind(this)
+    this.deleteCommentsReplyHandler = this.deleteCommentsReplyHandler.bind(this)
   }
 
   async postThreadHandler (request, h) {
@@ -95,6 +97,21 @@ class ThreadsHandler {
       }
     })
     response.code(201)
+    return response
+  }
+
+  async deleteCommentsReplyHandler (request, h) {
+    const deleteCommentsReplyUseCase = this._container.getInstance(DeleteCommentsReplyUseCase.name)
+
+    const { id: owner } = request.auth.credentials
+    const { threadId, commentId, replyId } = request.params
+
+    await deleteCommentsReplyUseCase.execute(owner, threadId, commentId, replyId)
+
+    const response = h.response({
+      status: 'success',
+      message: 'Comment reply deleted successfully'
+    })
     return response
   }
 }

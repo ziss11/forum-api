@@ -81,6 +81,28 @@ describe('ThreadRepository postgres', () => {
     })
   })
 
+  describe('verifyReplyOwner function', () => {
+    it('should throw AuthorizationError when user not owner', async () => {
+      // Arrange
+      const threadId = 'thread-123'
+      const commentId = 'comment-123'
+      const replyId = 'reply-123'
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: 'user-123', username: 'dicoding' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+      await CommentsTableTestHelper.addComments({ id: commentId })
+      await RepliesTableTestHelper.addReply({ id: replyId })
+
+      // Action
+      const result = threadRepositoryPostgres.verifyReplyOwner(commentId, replyId, 'user-321')
+
+      // Assert
+      await expect(result).rejects.toThrowError(AuthorizationError)
+    })
+  })
+
   describe('addThread function', () => {
     const owner = 'user-123'
     const threadId = 'thread-123'

@@ -358,4 +358,76 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.addedReply).toBeDefined()
     })
   })
+
+  describe('when DELETE /threads/{threadId}/comments/{commentId}/replies/{replyId}', () => {
+    it('should response 200 if reply deleted', async () => {
+      const server = await createServer(container)
+      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
+      const threadId = await ServerTestHelper.getThreadHelper({ server, accessToken })
+      const commentId = await ServerTestHelper.getCommentHelper({ server, accessToken, threadId })
+      const replyId = await ServerTestHelper.getReplyHelper({ server, accessToken, threadId, commentId })
+
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(200)
+      expect(responseJson.status).toEqual('success')
+    })
+
+    it('should response 403 when user not the reply owner', async () => {
+      // Arrange
+      const server = await createServer(container)
+      const accessToken1 = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
+      const threadId = await ServerTestHelper.getThreadHelper({ server, accessToken: accessToken1 })
+      const commentId = await ServerTestHelper.getCommentHelper({ server, accessToken: accessToken1, threadId })
+      const replyId = await ServerTestHelper.getReplyHelper({ server, accessToken: accessToken1, threadId, commentId })
+
+      const accessToken2 = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server, username: 'dicoding2' })
+
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+        headers: {
+          Authorization: `Bearer ${accessToken2}`
+        }
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(403)
+      expect(responseJson.status).toEqual('fail')
+    })
+
+    it('should response 404 if thread or comment or reply not found', async () => {
+      // Arrange
+      const server = await createServer(container)
+      const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
+      const threadId = 'thread-122'
+      const commentId = 'comment-122'
+      const replyId = 'reply-122'
+
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
+
+      // Assert
+      const responseJson = JSON.parse(response.payload)
+      expect(response.statusCode).toEqual(404)
+      expect(responseJson.status).toEqual('fail')
+    })
+  })
 })

@@ -73,6 +73,22 @@ const ServerTestHelper = {
     return id
   },
 
+  async getReplyHelper ({ server, accessToken, threadId, commentId }) {
+    const responseThread = await server.inject({
+      method: 'POST',
+      url: `/threads/${threadId}/comments/${commentId}/replies`,
+      payload: {
+        content: 'thread comment reply'
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+
+    const { id } = JSON.parse(responseThread.payload).data.addedReply
+    return id
+  },
+
   async deleteThreadCommentHandler ({ server, accessToken, threadId, commentId }) {
     await server.inject({
       method: 'DELETE',

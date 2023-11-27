@@ -51,6 +51,25 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     }
   }
 
+  async verifyReplyOwner (commentId, replyId, owner) {
+    const query = {
+      text: 'SELECT * FROM replies WHERE id = $1 AND comment_id = $2',
+      values: [replyId, commentId]
+    }
+
+    const result = await this._pool.query(query)
+
+    if (!result.rowCount) {
+      throw new NotFoundError('balasan tidak ditemukan')
+    }
+
+    const reply = result.rows[0]
+
+    if (owner !== reply.owner) {
+      throw new AuthorizationError('anda tidak berhak mengakses resource ini')
+    }
+  }
+
   async addThread (owner, newThread) {
     const { title, body } = newThread
     const id = `thread-${this._idGenerator()}`
@@ -117,19 +136,18 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       date: result.rows[0].thread_date,
       username: result.rows[0].thread_owner_username
     }
+
     const commentList = result.rows.reduce((acc, row) => {
       const commentId = row.comment_id
 
-      if (!acc.has(commentId)) {
-        const comment = {
-          id: commentId,
-          username: row.comment_owner_username,
-          date: row.comment_date,
-          content: row.comment_is_delete ? '**komentar telah dihapus**' : row.content,
-          replies: []
-        }
-        acc.set(commentId, comment)
+      const comment = acc.get(commentId) || {
+        id: commentId,
+        username: row.comment_owner_username,
+        date: row.comment_date,
+        content: row.comment_is_delete ? '**komentar telah dihapus**' : row.content,
+        replies: []
       }
+      acc.set(commentId, comment)
 
       if (row.reply_id) {
         const reply = new CommentReply({
