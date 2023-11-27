@@ -282,4 +282,29 @@ describe('ThreadRepository postgres', () => {
       expect(comment).toHaveLength(1)
     })
   })
+
+  describe('deleteCommentsReply', () => {
+    it('should delete comments reply from database', async () => {
+      // Arrange
+      const owner = 'user-123'
+      const threadId = 'thread-123'
+      const commentId = 'comment-123'
+      const replyId = 'reply-123'
+
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: owner, username: 'dicoding' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+      await CommentsTableTestHelper.addComments({ id: commentId })
+      await RepliesTableTestHelper.addReply({ id: replyId })
+
+      // Action
+      await threadRepositoryPostgres.deleteCommentsReply(replyId)
+
+      // Assert
+      const reply = await RepliesTableTestHelper.findReplyById(replyId)
+      expect(reply[0].is_delete).toBeTruthy()
+    })
+  })
 })

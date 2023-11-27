@@ -164,6 +164,15 @@ class ThreadRepositoryPostgres extends ThreadRepository {
 
     return new AddedReply({ ...result.rows[0] })
   }
+
+  async deleteCommentsReply (replyId) {
+    const query = {
+      text: 'UPDATE replies SET is_delete = true WHERE id = $1 RETURNING id, is_delete',
+      values: [replyId]
+    }
+
+    await this._pool.query(query)
+  }
 }
 
 module.exports = ThreadRepositoryPostgres
