@@ -30,6 +30,10 @@ class ThreadRepository {
   async addCommentsReply (owner, commentId, content) {
     throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED')
   }
+
+  async deleteCommentsReply (owner, threadId, commentId, replyId) {
+    throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED')
+  }
 }
 
 module.exports = ThreadRepository
