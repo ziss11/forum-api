@@ -283,7 +283,7 @@ describe('/threads endpoint', () => {
     })
   })
 
-  describe('when GET /threads/{threadId}/comments/{commentId}/replies', () => {
+  describe('when POST /threads/{threadId}/comments/{commentId}/replies', () => {
     it('should response 400 when payload not contain content', async () => {
       // Arrange
       const server = await createServer(container)
