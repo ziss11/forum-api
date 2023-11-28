@@ -1,4 +1,6 @@
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository')
+const CommentRepository = require('../../../../Domains/comments/CommentRepository')
+const ReplyRepository = require('../../../../Domains/replies/ReplyRepository')
 const DeleteCommentsReplyUseCase = require('../DeleteCommentsReplyUseCase')
 
 describe('DeleteCommentsReplyUseCase', () => {
@@ -21,18 +23,22 @@ describe('DeleteCommentsReplyUseCase', () => {
     }
 
     const mockThreadRepository = new ThreadRepository()
+    const mockCommentRepository = new CommentRepository()
+    const mockReplyRepository = new ReplyRepository()
 
     mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve())
-    mockThreadRepository.verifyCommentAvailability = jest.fn()
+    mockCommentRepository.verifyCommentAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve(mockCommentAvailableResult))
-    mockThreadRepository.verifyReplyOwner = jest.fn()
+    mockReplyRepository.verifyReplyOwner = jest.fn()
       .mockImplementation(() => Promise.resolve())
-    mockThreadRepository.deleteCommentsReply = jest.fn()
+    mockReplyRepository.deleteCommentsReply = jest.fn()
       .mockImplementation(() => Promise.resolve(mockDeletedCommentsResponse))
 
     const getThreadUseCase = new DeleteCommentsReplyUseCase({
-      threadRepository: mockThreadRepository
+      threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository,
+      replyRepository: mockReplyRepository
     })
 
     // Action
@@ -43,8 +49,8 @@ describe('DeleteCommentsReplyUseCase', () => {
       status: 'success'
     })
     expect(mockThreadRepository.verifyThreadAvailability).toBeCalledWith(threadId)
-    expect(mockThreadRepository.verifyCommentAvailability).toBeCalledWith(commentId)
-    expect(mockThreadRepository.verifyReplyOwner).toBeCalledWith(commentId, replyId, owner)
-    expect(mockThreadRepository.deleteCommentsReply).toBeCalledWith(replyId)
+    expect(mockCommentRepository.verifyCommentAvailability).toBeCalledWith(commentId)
+    expect(mockReplyRepository.verifyReplyOwner).toBeCalledWith(commentId, replyId, owner)
+    expect(mockReplyRepository.deleteCommentsReply).toBeCalledWith(replyId)
   })
 })

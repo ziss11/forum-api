@@ -1,4 +1,5 @@
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository')
+const CommentRepository = require('../../../../Domains/comments/CommentRepository')
 const DeleteCommentsUseCase = require('../DeleteCommentsUseCase.js')
 
 describe('DeleteCommentsUseCase', () => {
@@ -13,16 +14,18 @@ describe('DeleteCommentsUseCase', () => {
     }
 
     const mockThreadRepository = new ThreadRepository()
+    const mockCommentRepository = new CommentRepository()
 
     mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve())
-    mockThreadRepository.verifyCommentOwner = jest.fn()
+    mockCommentRepository.verifyCommentOwner = jest.fn()
       .mockImplementation(() => Promise.resolve())
-    mockThreadRepository.deleteThreadComments = jest.fn()
+    mockCommentRepository.deleteThreadComments = jest.fn()
       .mockImplementation(() => Promise.resolve(mockDeletedCommentsResponse))
 
     const getThreadUseCase = new DeleteCommentsUseCase({
-      threadRepository: mockThreadRepository
+      threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository
     })
 
     // Action
@@ -33,7 +36,7 @@ describe('DeleteCommentsUseCase', () => {
       status: 'success'
     })
     expect(mockThreadRepository.verifyThreadAvailability).toBeCalledWith(threadId)
-    expect(mockThreadRepository.verifyCommentOwner).toBeCalledWith(commentId, owner)
-    expect(mockThreadRepository.deleteThreadComments).toBeCalledWith(commentId)
+    expect(mockCommentRepository.verifyCommentOwner).toBeCalledWith(commentId, owner)
+    expect(mockCommentRepository.deleteThreadComments).toBeCalledWith(commentId)
   })
 })

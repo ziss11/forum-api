@@ -13,7 +13,7 @@ class ThreadsHandler {
     this.postThreadCommentsHandler = this.postThreadCommentsHandler.bind(this)
     this.getThreadByIdHandler = this.getThreadByIdHandler.bind(this)
     this.deleteThreadCommentsHandler = this.deleteThreadCommentsHandler.bind(this)
-    this.addCommentsReplyHandler = this.addCommentsReplyHandler.bind(this)
+    this.postCommentsReplyHandler = this.postCommentsReplyHandler.bind(this)
     this.deleteCommentsReplyHandler = this.deleteCommentsReplyHandler.bind(this)
   }
 
@@ -81,7 +81,7 @@ class ThreadsHandler {
     return response
   }
 
-  async addCommentsReplyHandler (request, h) {
+  async postCommentsReplyHandler (request, h) {
     const addCommentsReplyUseCase = this._container.getInstance(AddCommentsReplyUseCase.name)
 
     const { id: owner } = request.auth.credentials

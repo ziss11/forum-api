@@ -1,15 +1,17 @@
 class DeleteCommentsReplyUseCase {
-  constructor ({ threadRepository }) {
+  constructor ({ threadRepository, commentRepository, replyRepository }) {
     this._threadRepository = threadRepository
+    this._commentRepository = commentRepository
+    this._replyRepository = replyRepository
   }
 
   async execute (owner, threadId, commentId, replyId) {
     await Promise.all([
       this._threadRepository.verifyThreadAvailability(threadId),
-      this._threadRepository.verifyCommentAvailability(commentId),
-      this._threadRepository.verifyReplyOwner(commentId, replyId, owner)
+      this._commentRepository.verifyCommentAvailability(commentId),
+      this._replyRepository.verifyReplyOwner(commentId, replyId, owner)
     ])
-    return await this._threadRepository.deleteCommentsReply(replyId)
+    return await this._replyRepository.deleteCommentsReply(replyId)
   }
 }
 
