@@ -1,26 +1,19 @@
+const AddReply = require('../../../Domains/replies/entities/AddReply')
+
 class AddCommentsReplyUseCase {
   constructor ({ threadRepository }) {
     this._threadRepository = threadRepository
   }
 
   async execute (useCasePayload) {
-    this._validatePayload(useCasePayload)
-    const { owner, threadId, commentId, content } = useCasePayload
-    await this._threadRepository.verifyThreadAvailability(threadId)
-    await this._threadRepository.verifyCommentAvailability(commentId)
-    return await this._threadRepository.addCommentsReply({ owner, commentId, content })
-  }
-
-  _validatePayload (payload) {
-    const { content } = payload
-
-    if (!content) {
-      throw new Error('ADD_REPLY.NOT_CONTAIN_NEEDED_PROPERTY')
-    }
-
-    if (typeof content !== 'string') {
-      throw new Error('ADD_REPLY.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION')
-    }
+    const addReply = new AddReply(useCasePayload)
+    await this._threadRepository.verifyThreadAvailability(addReply.threadId)
+    await this._threadRepository.verifyCommentAvailability(addReply.commentId)
+    return await this._threadRepository.addCommentsReply({
+      owner: addReply.owner,
+      commentId: addReply.commentId,
+      content: addReply.content
+    })
   }
 }
 
