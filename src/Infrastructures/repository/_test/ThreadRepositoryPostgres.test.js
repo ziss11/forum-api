@@ -257,6 +257,24 @@ describe('ThreadRepository postgres', () => {
       expect(threadDetail.id).toEqual(threadId)
     })
 
+    it('should throw NotFound Error when thread not found', async () => {
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: threadOwner, username: 'dicoding' })
+      await UsersTableTestHelper.addUser({ id: commentOwner, username: 'john' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+      await CommentsTableTestHelper.addComments({ id: commentId, owner: commentOwner })
+      await RepliesTableTestHelper.addReply({ id: replyId, owner: commentOwner, commentId })
+      await CommentsTableTestHelper.deleteComment(threadId, commentId)
+
+      // Action
+      const result = threadRepositoryPostgres.getThreadById('thread-321')
+
+      // Assert
+      await expect(result).rejects.toThrowError(NotFoundError)
+    })
+
     it('should change comment content into **komentar telah dihapus** if comment is deleted', async () => {
       // Arrange
       const fakeIdGenerator = () => 123
