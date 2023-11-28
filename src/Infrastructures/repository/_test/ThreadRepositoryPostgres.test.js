@@ -82,15 +82,33 @@ describe('ThreadRepository postgres', () => {
   })
 
   describe('verifyReplyOwner function', () => {
-    it('should throw AuthorizationError when user not owner', async () => {
+    const owner = 'user-123'
+    const threadId = 'thread-123'
+    const commentId = 'comment-123'
+    const replyId = 'reply-123'
+
+    it('should throw NotFoundError when comment not found', async () => {
       // Arrange
-      const threadId = 'thread-123'
-      const commentId = 'comment-123'
-      const replyId = 'reply-123'
       const fakeIdGenerator = () => 123
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
 
-      await UsersTableTestHelper.addUser({ id: 'user-123', username: 'dicoding' })
+      await UsersTableTestHelper.addUser({ id: owner, username: 'dicoding' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+      await CommentsTableTestHelper.addComments({ id: commentId })
+
+      // Action
+      const addedComment = threadRepositoryPostgres.verifyReplyOwner(commentId, replyId, owner)
+
+      // Assert
+      await expect(addedComment).rejects.toThrowError(NotFoundError)
+    })
+
+    it('should throw AuthorizationError when user not owner', async () => {
+      // Arrange
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: owner, username: 'dicoding' })
       await ThreadsTableTestHelper.addThread({ id: threadId })
       await CommentsTableTestHelper.addComments({ id: commentId })
       await RepliesTableTestHelper.addReply({ id: replyId })
