@@ -1,9 +1,9 @@
 const AddThreadUseCase = require('../../../../Applications/use_case/threads/AddThreadUseCase')
-const DeleteCommentsUseCase = require('../../../../Applications/use_case/threads/DeleteCommentsUseCase')
 const GetThreadByIdUseCase = require('../../../../Applications/use_case/threads/GetThreadByIdUseCase')
-const AddCommentsUseCase = require('../../../../Applications/use_case/threads/AddCommentsUseCase')
-const AddCommentsReplyUseCase = require('../../../../Applications/use_case/threads/AddCommentsReplyUseCase')
-const DeleteCommentsReplyUseCase = require('../../../../Applications/use_case/threads/DeleteCommentsReplyUseCase')
+const AddCommentsUseCase = require('../../../../Applications/use_case/comments/AddCommentsUseCase')
+const AddCommentsReplyUseCase = require('../../../../Applications/use_case/replies/AddCommentsReplyUseCase')
+const DeleteCommentsReplyUseCase = require('../../../../Applications/use_case/replies/DeleteCommentsReplyUseCase')
+const DeleteCommentsUseCase = require('../../../../Applications/use_case/comments/DeleteCommentsUseCase')
 
 class ThreadsHandler {
   constructor (container) {

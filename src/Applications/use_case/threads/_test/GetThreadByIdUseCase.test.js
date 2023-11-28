@@ -1,5 +1,5 @@
+const Comment = require('../../../../Domains/comments/entities/Comment')
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository')
-const Comment = require('../../../../Domains/threads/entities/Comment')
 const ThreadDetail = require('../../../../Domains/threads/entities/ThreadDetail')
 const GetThreadByIdUseCase = require('../GetThreadByIdUseCase')
 
