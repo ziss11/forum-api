@@ -30,7 +30,9 @@ DomainErrorTranslator._directories = {
   'ADDED_REPLY.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat menambahkan reply karena properti yang dibutuhkan tidak ada'),
   'ADDED_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat menambahkan reply karena tipe data tidak sesuai'),
   'ADD_COMMENTS_REPLY_USE_CASE.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat menambahkan reply karena properti yang dibutuhkan tidak ada'),
-  'ADD_COMMENTS_REPLY_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat menambahkan reply karena tipe data tidak sesuai')
+  'ADD_COMMENTS_REPLY_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat menambahkan reply karena tipe data tidak sesuai'),
+  'ADD_COMMENTS.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat menambahkan komentar karena properti yang dibutuhkan tidak ada'),
+  'ADD_COMMENTS.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat menambahkan komentar karena tipe data tidak sesuai')
 }
 
 module.exports = DomainErrorTranslator

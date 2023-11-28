@@ -9,7 +9,7 @@ describe('a AddComment entities', () => {
     }
 
     // Action and Assert
-    expect(() => new AddComment(payload)).toThrowError('ADDED_COMMENTS.NOT_CONTAIN_NEEDED_PROPERTY')
+    expect(() => new AddComment(payload)).toThrowError('ADD_COMMENTS.NOT_CONTAIN_NEEDED_PROPERTY')
   })
 
   it('should throw error when payload did not meet type spesification', () => {
@@ -21,7 +21,7 @@ describe('a AddComment entities', () => {
     }
 
     // Action and Assert
-    expect(() => new AddComment(payload)).toThrowError('ADDED_COMMENTS.NOT_MEET_DATA_TYPE_SPECIFICATION')
+    expect(() => new AddComment(payload)).toThrowError('ADD_COMMENTS.NOT_MEET_DATA_TYPE_SPECIFICATION')
   })
 
   it('should create addComent object correctly', () => {

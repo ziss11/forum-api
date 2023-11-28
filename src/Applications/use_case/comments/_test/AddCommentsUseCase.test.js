@@ -14,14 +14,14 @@ describe('AddComments', () => {
     // Action & Assert
     await expect(addCommentsReplyUseCase.execute(useCasePayload))
       .rejects
-      .toThrowError('ADD_COMMENTS_REPLY_USE_CASE.NOT_CONTAIN_NEEDED_PROPERTY')
+      .toThrowError('ADD_COMMENTS.NOT_CONTAIN_NEEDED_PROPERTY')
   })
 
   it('should throw error if content not string', async () => {
     // Arrange
     const useCasePayload = {
-      owner: 'user-123',
-      threadId: 'thread-123',
+      owner: 123,
+      threadId: 123,
       content: 123
     }
     const addCommentsReplyUseCase = new AddCommentsUseCase({})
@@ -29,7 +29,7 @@ describe('AddComments', () => {
     // Action & Assert
     await expect(addCommentsReplyUseCase.execute(useCasePayload))
       .rejects
-      .toThrowError('ADD_COMMENTS_REPLY_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION')
+      .toThrowError('ADD_COMMENTS.NOT_MEET_DATA_TYPE_SPECIFICATION')
   })
 
   it('should orchestrating the add thread action correctly', async () => {

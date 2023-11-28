@@ -11,11 +11,11 @@ class AddComment {
     const { owner, threadId, content } = payload
 
     if (!owner || !threadId || !content) {
-      throw new Error('ADDED_COMMENTS.NOT_CONTAIN_NEEDED_PROPERTY')
+      throw new Error('ADD_COMMENTS.NOT_CONTAIN_NEEDED_PROPERTY')
     }
 
     if (typeof owner !== 'string' || typeof threadId !== 'string' || typeof content !== 'string') {
-      throw new Error('ADDED_COMMENTS.NOT_MEET_DATA_TYPE_SPECIFICATION')
+      throw new Error('ADD_COMMENTS.NOT_MEET_DATA_TYPE_SPECIFICATION')
     }
   }
 }
