@@ -1,6 +1,6 @@
 const ThreadRepository = require('../../Domains/threads/ThreadRepository')
 const AddedThread = require('../../Domains/threads/entities/AddedThread')
-const AddedComments = require('../../Domains/comments/entities/AddedComments')
+const AddedComment = require('../../Domains/comments/entities/AddedComment')
 const ThreadDetail = require('../../Domains/threads/entities/ThreadDetail')
 const Comment = require('../../Domains/comments/entities/Comment')
 const NotFoundError = require('../../Commons/exceptions/NotFoundError')
@@ -95,7 +95,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
 
     const result = await this._pool.query(query)
 
-    return new AddedComments({ ...result.rows[0] })
+    return new AddedComment({ ...result.rows[0] })
   }
 
   async deleteThreadComments (commentId) {

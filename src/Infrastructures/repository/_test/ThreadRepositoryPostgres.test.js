@@ -5,7 +5,7 @@ const NewThread = require('../../../Domains/threads/entities/NewThread')
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper')
 const AddedThread = require('../../../Domains/threads/entities/AddedThread')
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper')
-const AddedComments = require('../../../Domains/comments/entities/AddedComments')
+const AddedComment = require('../../../Domains/comments/entities/AddedComment')
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError')
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError')
 const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper')
@@ -184,7 +184,7 @@ describe('ThreadRepository postgres', () => {
       const addedComment = await threadRepositoryPostgres.addThreadCommentsById(owner, threadId, content)
 
       // Assert
-      expect(addedComment).toStrictEqual(new AddedComments({
+      expect(addedComment).toStrictEqual(new AddedComment({
         id: 'comment-123',
         content,
         owner

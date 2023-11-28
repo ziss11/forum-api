@@ -1,5 +1,5 @@
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository')
-const AddedComments = require('../../../../Domains/comments/entities/AddedComments')
+const AddedComment = require('../../../../Domains/comments/entities/AddedComment')
 const AddCommentsUseCase = require('../AddCommentsUseCase')
 
 describe('AddComments', () => {
@@ -39,7 +39,7 @@ describe('AddComments', () => {
       threadId: 'thread-123',
       content: 'content'
     }
-    const mockAddedComments = new AddedComments({
+    const mockAddedComment = new AddedComment({
       id: 'comment-123',
       content: useCasePayload.content,
       owner: useCasePayload.owner
@@ -50,7 +50,7 @@ describe('AddComments', () => {
     mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve())
     mockThreadRepository.addThreadCommentsById = jest.fn()
-      .mockImplementation(() => Promise.resolve(mockAddedComments))
+      .mockImplementation(() => Promise.resolve(mockAddedComment))
 
     const getThreadUseCase = new AddCommentsUseCase({
       threadRepository: mockThreadRepository
@@ -61,7 +61,7 @@ describe('AddComments', () => {
     const addedComments = await getThreadUseCase.execute(useCasePayload)
 
     // Assert
-    expect(addedComments).toStrictEqual(new AddedComments({
+    expect(addedComments).toStrictEqual(new AddedComment({
       id: 'comment-123',
       content: useCasePayload.content,
       owner: useCasePayload.owner
