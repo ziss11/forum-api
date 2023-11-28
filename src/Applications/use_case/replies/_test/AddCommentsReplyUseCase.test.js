@@ -15,7 +15,7 @@ describe('AddCommentsReplyUseCase', () => {
     // Action & Assert
     await expect(addCommentsReplyUseCase.execute(useCasePayload))
       .rejects
-      .toThrowError('ADD_COMMENTS_REPLY_USE_CASE.NOT_CONTAIN_NEEDED_PROPERTY')
+      .toThrowError('ADD_REPLY.NOT_CONTAIN_NEEDED_PROPERTY')
   })
 
   it('should throw error if content not string', async () => {
@@ -31,7 +31,7 @@ describe('AddCommentsReplyUseCase', () => {
     // Action & Assert
     await expect(addCommentsReplyUseCase.execute(useCasePayload))
       .rejects
-      .toThrowError('ADD_COMMENTS_REPLY_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION')
+      .toThrowError('ADD_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION')
   })
 
   it('should orchestrating the add reply action correctly', async () => {

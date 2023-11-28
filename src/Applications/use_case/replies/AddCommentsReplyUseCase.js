@@ -15,11 +15,11 @@ class AddCommentsReplyUseCase {
     const { content } = payload
 
     if (!content) {
-      throw new Error('ADD_COMMENTS_REPLY_USE_CASE.NOT_CONTAIN_NEEDED_PROPERTY')
+      throw new Error('ADD_REPLY.NOT_CONTAIN_NEEDED_PROPERTY')
     }
 
     if (typeof content !== 'string') {
-      throw new Error('ADD_COMMENTS_REPLY_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION')
+      throw new Error('ADD_REPLY.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION')
     }
   }
 }
