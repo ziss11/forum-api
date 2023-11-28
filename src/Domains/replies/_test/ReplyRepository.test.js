@@ -6,6 +6,7 @@ describe('ReplyRepository interface', () => {
     const replyRepository = new ReplyRepository()
 
     // Action and Assert
+    expect(replyRepository.getCommentsReplyByThreadId('', '')).rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED')
     expect(replyRepository.verifyReplyOwner('', '', '')).rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED')
     expect(replyRepository.addCommentsReply('', '', '')).rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED')
     expect(replyRepository.deleteCommentsReply('')).rejects.toThrowError('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED')

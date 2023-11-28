@@ -19,6 +19,30 @@ describe('ReplyRepository postgres', () => {
     await pool.end()
   })
 
+  describe('getCommentsReplyByThreadId function', () => {
+    const owner = 'user-123'
+    const threadId = 'thread-123'
+    const commentId = 'comment-123'
+    const replyId = 'reply-123'
+
+    it('should get comments reply by thread id correctly', async () => {
+      // Arrange
+      const fakeIdGenerator = () => 123
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: owner, username: 'dicoding' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+      await CommentsTableTestHelper.addComments({ id: commentId })
+      await RepliesTableTestHelper.addReply({ id: replyId })
+
+      // Action
+      const result = await replyRepositoryPostgres.getCommentsReplyByThreadId(threadId)
+      // Assert
+      expect(result[0].id).toEqual(replyId)
+      expect(result).toHaveLength(1)
+    })
+  })
+
   describe('verifyReplyOwner function', () => {
     const owner = 'user-123'
     const threadId = 'thread-123'

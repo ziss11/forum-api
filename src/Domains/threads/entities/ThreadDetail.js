@@ -11,15 +11,15 @@ class ThreadDetail {
   }
 
   _validatePayload (payload) {
-    const { id, title, body, date, username, comments } = payload
+    const { id, title, body, date, username } = payload
 
-    if (!id || !title || !body || !date || !username || !comments) {
+    if (!id || !title || !body || !date || !username) {
       throw new Error('THREAD_DETAIL.NOT_CONTAIN_NEEDED_PROPERTY')
     }
 
     if (typeof id !== 'string' || typeof title !== 'string' ||
         typeof body !== 'string' || typeof date !== 'string' ||
-        typeof username !== 'string' || typeof comments !== 'object') {
+        typeof username !== 'string') {
       throw new Error('THREAD_DETAIL.NOT_MEET_DATA_TYPE_SPECIFICATION')
     }
   }

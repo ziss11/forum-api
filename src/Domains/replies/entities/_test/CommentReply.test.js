@@ -32,16 +32,18 @@ describe('a CommentReply entities', () => {
       id: 'id-123',
       username: 'username',
       date: 'date',
-      content: 'content'
+      content: 'content',
+      isDelete: false
     }
 
     // Action
-    const { id, username, date, content } = new CommentReply(payload)
+    const { id, username, date, isDelete, content } = new CommentReply(payload)
 
     // Assert
     expect(id).toEqual(payload.id)
     expect(username).toEqual(payload.username)
     expect(date).toEqual(payload.date)
+    expect(isDelete).toEqual(payload.isDelete)
     expect(content).toEqual(payload.content)
   })
 })

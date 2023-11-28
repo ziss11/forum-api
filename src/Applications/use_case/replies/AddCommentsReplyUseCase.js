@@ -13,6 +13,7 @@ class AddCommentsReplyUseCase {
     await this._commentRepository.verifyCommentAvailability(addReply.commentId)
     return await this._replyRepository.addCommentsReply({
       owner: addReply.owner,
+      threadId: addReply.threadId,
       commentId: addReply.commentId,
       content: addReply.content
     })

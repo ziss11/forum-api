@@ -8,8 +8,7 @@ describe('a ThreadDetail entities', () => {
       id: 'id',
       title: 'title',
       body: 'body',
-      date: 'date',
-      username: 'username'
+      date: 'date'
     }
 
     // Action and Assert

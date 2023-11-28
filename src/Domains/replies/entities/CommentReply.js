@@ -6,6 +6,8 @@ class CommentReply {
     this.username = payload.username
     this.date = payload.date
     this.content = payload.content
+    this.commentId = payload.commentId
+    this.isDelete = payload.isDelete
   }
 
   _validatePayload (payload) {
@@ -16,7 +18,7 @@ class CommentReply {
     }
 
     if (typeof id !== 'string' || typeof username !== 'string' ||
-          typeof date !== 'string' || typeof content !== 'string') {
+      typeof date !== 'string' || typeof content !== 'string') {
       throw new Error('COMMENT_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION')
     }
   }

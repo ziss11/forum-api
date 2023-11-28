@@ -6,6 +6,7 @@ describe('CommentRepository interface', () => {
     const commentRepository = new CommentRepository()
 
     // Action and Assert
+    expect(commentRepository.getCommentByThreadId('')).rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED')
     expect(commentRepository.addThreadCommentsById('', '', '')).rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED')
     expect(commentRepository.deleteThreadComments('')).rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED')
     expect(commentRepository.verifyCommentAvailability('', '')).rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED')

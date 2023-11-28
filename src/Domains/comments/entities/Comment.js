@@ -6,6 +6,7 @@ class Comment {
     this.username = payload.username
     this.date = payload.date
     this.content = payload.content
+    this.isDelete = payload.isDelete
     this.replies = payload.replies
   }
 

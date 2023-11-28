@@ -34,17 +34,19 @@ describe('a Comment entities', () => {
       username: 'username',
       date: 'date',
       content: 'content',
+      isDelete: false,
       replies: []
     }
 
     // Action
-    const { id, username, date, content, replies } = new Comment(payload)
+    const { id, username, date, content, isDelete, replies } = new Comment(payload)
 
     // Assert
     expect(id).toEqual(payload.id)
     expect(username).toEqual(payload.username)
     expect(date).toEqual(payload.date)
     expect(content).toEqual(payload.content)
+    expect(isDelete).toEqual(payload.isDelete)
     expect(replies).toEqual(payload.replies)
   })
 })

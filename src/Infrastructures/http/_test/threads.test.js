@@ -229,7 +229,6 @@ describe('/threads endpoint', () => {
       const accessToken = await ServerTestHelper.getAccessTokenAndUserIdHelper({ server })
       const threadId = await ServerTestHelper.getThreadHelper({ server, accessToken })
       await ServerTestHelper.getCommentHelper({ server, accessToken, threadId })
-
       // Action
       const response = await server.inject({
         method: 'GET',

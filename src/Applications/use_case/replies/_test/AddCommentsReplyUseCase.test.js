@@ -86,6 +86,6 @@ describe('AddCommentsReplyUseCase', () => {
     }))
     expect(mockThreadRepository.verifyThreadAvailability).toBeCalledWith(threadId)
     expect(mockCommentRepository.verifyCommentAvailability).toBeCalledWith(commentId)
-    expect(mockReplyRepository.addCommentsReply).toBeCalledWith({ owner, commentId, content })
+    expect(mockReplyRepository.addCommentsReply).toBeCalledWith({ owner, threadId, commentId, content })
   })
 })
