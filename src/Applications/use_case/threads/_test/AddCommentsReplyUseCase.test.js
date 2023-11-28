@@ -1,6 +1,6 @@
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository')
 const AddCommentsReplyUseCase = require('../AddCommentsReplyUseCase')
-const AddedReply = require('../../../../Domains/threads/entities/AddedReply')
+const AddedReply = require('../../../../Domains/replies/entities/AddedReply')
 
 describe('AddCommentsReplyUseCase', () => {
   it('should throw error if use case payload not contain content', async () => {
@@ -42,6 +42,13 @@ describe('AddCommentsReplyUseCase', () => {
       commentId: 'comment-123',
       content: 'content'
     }
+    const mockCommentAvailableResult = {
+      id: 'comment-123',
+      owner: 'user-123',
+      threadId: 'thread-123',
+      content: 'content',
+      date: new Date().toISOString()
+    }
     const mockAddedReply = new AddedReply({
       id: 'reply-123',
       content: useCasePayload.content,
@@ -53,7 +60,7 @@ describe('AddCommentsReplyUseCase', () => {
     mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve())
     mockThreadRepository.verifyCommentAvailability = jest.fn()
-      .mockImplementation(() => Promise.resolve())
+      .mockImplementation(() => Promise.resolve(mockCommentAvailableResult))
     mockThreadRepository.addCommentsReply = jest.fn()
       .mockImplementation(() => Promise.resolve(mockAddedReply))
 

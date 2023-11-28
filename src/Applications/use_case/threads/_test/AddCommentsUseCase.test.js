@@ -1,5 +1,5 @@
 const ThreadRepository = require('../../../../Domains/threads/ThreadRepository')
-const AddedComments = require('../../../../Domains/threads/entities/AddedComments')
+const AddedComments = require('../../../../Domains/comments/entities/AddedComments')
 const AddCommentsUseCase = require('../AddCommentsUseCase')
 
 describe('AddComments', () => {
@@ -48,7 +48,7 @@ describe('AddComments', () => {
     const mockThreadRepository = new ThreadRepository()
 
     mockThreadRepository.verifyThreadAvailability = jest.fn()
-      .mockImplementation(() => Promise.resolve(mockAddedComments))
+      .mockImplementation(() => Promise.resolve())
     mockThreadRepository.addThreadCommentsById = jest.fn()
       .mockImplementation(() => Promise.resolve(mockAddedComments))
 

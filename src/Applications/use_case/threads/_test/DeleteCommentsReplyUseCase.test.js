@@ -9,6 +9,13 @@ describe('DeleteCommentsReplyUseCase', () => {
     const commentId = 'comment-123'
     const replyId = 'reply-123'
 
+    const mockCommentAvailableResult = {
+      id: 'comment-123',
+      owner: 'user-123',
+      threadId: 'thread-123',
+      content: 'content',
+      date: new Date().toISOString()
+    }
     const mockDeletedCommentsResponse = {
       status: 'success'
     }
@@ -18,7 +25,7 @@ describe('DeleteCommentsReplyUseCase', () => {
     mockThreadRepository.verifyThreadAvailability = jest.fn()
       .mockImplementation(() => Promise.resolve())
     mockThreadRepository.verifyCommentAvailability = jest.fn()
-      .mockImplementation(() => Promise.resolve())
+      .mockImplementation(() => Promise.resolve(mockCommentAvailableResult))
     mockThreadRepository.verifyReplyOwner = jest.fn()
       .mockImplementation(() => Promise.resolve())
     mockThreadRepository.deleteCommentsReply = jest.fn()
