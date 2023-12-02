@@ -21,6 +21,23 @@ describe('ThreadRepository postgres', () => {
   })
 
   describe('verifyThreadAvailability function', () => {
+    it('should return thread correctly when thread is available', async () => {
+      // Arrange
+      const owner = 'user-123'
+      const threadId = 'thread-123'
+      const fakeIdGenerator = () => 123
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: owner, username: 'dicoding' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+
+      // Action
+      const thread = await threadRepositoryPostgres.verifyThreadAvailability(threadId)
+
+      // Assert
+      expect(thread).toBeDefined()
+    })
+
     it('should throw NotFoundError when thread not found', async () => {
       // Arrange
       const owner = 'user-123'
@@ -31,10 +48,10 @@ describe('ThreadRepository postgres', () => {
       await UsersTableTestHelper.addUser({ id: owner, username: 'dicoding' })
 
       // Action
-      const addedComment = threadRepositoryPostgres.verifyThreadAvailability(threadId)
+      const thread = threadRepositoryPostgres.verifyThreadAvailability(threadId)
 
       // Assert
-      await expect(addedComment).rejects.toThrowError(NotFoundError)
+      await expect(thread).rejects.toThrowError(NotFoundError)
     })
   })
 

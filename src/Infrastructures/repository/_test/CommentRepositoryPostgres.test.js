@@ -107,6 +107,25 @@ describe('CommentRepository postgres', () => {
   })
 
   describe('verifyCommentAvailability function', () => {
+    it('should return comment correctly when comment found', async () => {
+      // Arrange
+      const owner = 'user-123'
+      const threadId = 'thread-123'
+      const commentId = 'comment-123'
+      const fakeIdGenerator = () => 123
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: owner, username: 'dicoding' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+      await CommentsTableTestHelper.addComments({ id: commentId })
+
+      // Action
+      const addedComment = await commentRepositoryPostgres.verifyCommentAvailability(commentId)
+
+      // Assert
+      expect(addedComment).toBeDefined()
+    })
+
     it('should throw NotFoundError when comment not found', async () => {
       // Arrange
       const owner = 'user-123'
@@ -120,7 +139,7 @@ describe('CommentRepository postgres', () => {
       await CommentsTableTestHelper.addComments({ id: commentId })
 
       // Action
-      const addedComment = commentRepositoryPostgres.verifyCommentAvailability(threadId, commentId)
+      const addedComment = commentRepositoryPostgres.verifyCommentAvailability('comment-321')
 
       // Assert
       await expect(addedComment).rejects.toThrowError(NotFoundError)
@@ -128,6 +147,25 @@ describe('CommentRepository postgres', () => {
   })
 
   describe('verifyCommentOwner function', () => {
+    it('should return comment correctly when user is owner', async () => {
+      // Arrange
+      const owner = 'user-123'
+      const threadId = 'thread-123'
+      const commentId = 'comment-123'
+      const fakeIdGenerator = () => 123
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: owner, username: 'dicoding' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+      await CommentsTableTestHelper.addComments({ id: commentId })
+
+      // Action
+      const result = await commentRepositoryPostgres.verifyCommentOwner(commentId, owner)
+
+      // Assert
+      expect(result).toBeDefined()
+    })
+
     it('should throw AuthorizationError when user not owner', async () => {
       // Arrange
       const threadId = 'thread-123'

@@ -49,6 +49,23 @@ describe('ReplyRepository postgres', () => {
     const commentId = 'comment-123'
     const replyId = 'reply-123'
 
+    it('should get comments reply by thread id correctly when user is owner', async () => {
+      // Arrange
+      const fakeIdGenerator = () => 123
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, fakeIdGenerator)
+
+      await UsersTableTestHelper.addUser({ id: owner, username: 'dicoding' })
+      await ThreadsTableTestHelper.addThread({ id: threadId })
+      await CommentsTableTestHelper.addComments({ id: commentId })
+      await RepliesTableTestHelper.addReply({ id: replyId })
+
+      // Action
+      const addedReply = await replyRepositoryPostgres.verifyReplyOwner(commentId, replyId, owner)
+
+      // Assert
+      expect(addedReply).toBeDefined()
+    })
+
     it('should throw NotFoundError when comment not found', async () => {
       // Arrange
       const fakeIdGenerator = () => 123
@@ -59,10 +76,10 @@ describe('ReplyRepository postgres', () => {
       await CommentsTableTestHelper.addComments({ id: commentId })
 
       // Action
-      const addedComment = replyRepositoryPostgres.verifyReplyOwner(commentId, replyId, owner)
+      const addedReply = replyRepositoryPostgres.verifyReplyOwner(commentId, replyId, owner)
 
       // Assert
-      await expect(addedComment).rejects.toThrowError(NotFoundError)
+      await expect(addedReply).rejects.toThrowError(NotFoundError)
     })
 
     it('should throw AuthorizationError when user not owner', async () => {

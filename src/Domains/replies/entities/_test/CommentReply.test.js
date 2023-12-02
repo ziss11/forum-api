@@ -30,6 +30,7 @@ describe('a CommentReply entities', () => {
     // Arrange
     const payload = {
       id: 'id-123',
+      commentId: 'comment-123',
       username: 'username',
       date: 'date',
       content: 'content',
@@ -37,10 +38,11 @@ describe('a CommentReply entities', () => {
     }
 
     // Action
-    const { id, username, date, isDelete, content } = new CommentReply(payload)
+    const { id, commentId, username, date, isDelete, content } = new CommentReply(payload)
 
     // Assert
     expect(id).toEqual(payload.id)
+    expect(commentId).toEqual(payload.commentId)
     expect(username).toEqual(payload.username)
     expect(date).toEqual(payload.date)
     expect(isDelete).toEqual(payload.isDelete)

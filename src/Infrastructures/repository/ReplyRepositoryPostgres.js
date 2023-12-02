@@ -43,6 +43,8 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     if (owner !== reply.owner) {
       throw new AuthorizationError('anda tidak berhak mengakses resource ini')
     }
+
+    return reply
   }
 
   async addCommentsReply (payload) {

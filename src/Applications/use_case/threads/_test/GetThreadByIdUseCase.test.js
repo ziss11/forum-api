@@ -7,6 +7,45 @@ const GetThreadByIdUseCase = require('../GetThreadByIdUseCase')
 const CommentReply = require('../../../../Domains/replies/entities/CommentReply')
 
 describe('GetThreadByIdUseCase', () => {
+  const generateComment = (comment, replies) => {
+    const commentsWithReplies = comment.map((commentItem) => {
+      const commentReplies = replies
+        .filter((reply) => reply.commentId === commentItem.id)
+        .map((reply) => {
+          return {
+            id: reply.id,
+            username: reply.username,
+            date: reply.date,
+            content: reply.isDelete ? '**balasan telah dihapus**' : reply.content
+          }
+        })
+      return {
+        id: commentItem.id,
+        username: commentItem.username,
+        date: commentItem.date,
+        content: commentItem.isDelete ? '**komentar telah dihapus**' : commentItem.content,
+        replies: commentReplies
+      }
+    })
+    return commentsWithReplies
+  }
+
+  it('should generate comments with replies property', () => {
+    // Arrange
+    const comments = [
+      { id: 1, username: 'user1', date: '2023-12-01', content: 'Comment 1', isDelete: false }
+    ]
+    const replies = [
+      { id: 1, commentId: 1, username: 'user2', date: '2023-12-02', content: 'Reply to comment 1', isDelete: false }
+    ]
+
+    // Action
+    const result = generateComment(comments, replies)
+
+    // Assert
+    expect(result).toHaveLength(1)
+  })
+
   it('should orchestrating the get thread by id action correctly', async () => {
     // Arrange
     const threadId = 'thread-123'
@@ -16,7 +55,8 @@ describe('GetThreadByIdUseCase', () => {
         commentId: 'comment-_pby2_tmXV6bcvcdev8xk',
         username: 'johndoe',
         date: '2021-08-08T07:22:33.555Z',
-        content: 'sebuah balasan komentar'
+        content: 'sebuah balasan komentar',
+        isDelete: true
       })
     ]
     const mockComments = [
@@ -24,7 +64,8 @@ describe('GetThreadByIdUseCase', () => {
         id: 'comment-_pby2_tmXV6bcvcdev8xk',
         username: 'johndoe',
         date: '2021-08-08T07:22:33.555Z',
-        content: 'sebuah comment'
+        content: 'sebuah comment',
+        isDelete: true
       })
     ]
     const mockThreadDetail = new ThreadDetail({
@@ -68,13 +109,13 @@ describe('GetThreadByIdUseCase', () => {
             id: 'comment-_pby2_tmXV6bcvcdev8xk',
             username: 'johndoe',
             date: '2021-08-08T07:22:33.555Z',
-            content: 'sebuah comment',
+            content: '**komentar telah dihapus**',
             replies: [
               new CommentReply({
                 id: 'reply-_pby2_tmXV6bcvcdev8xk',
                 username: 'johndoe',
                 date: '2021-08-08T07:22:33.555Z',
-                content: 'sebuah balasan komentar'
+                content: '**balasan telah dihapus**'
               })
             ]
           })

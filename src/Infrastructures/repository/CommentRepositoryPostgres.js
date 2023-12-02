@@ -71,6 +71,8 @@ class CommentRepositoryPostgres extends CommentRepository {
     if (owner !== comment.owner) {
       throw new AuthorizationError('anda tidak berhak mengakses resource ini')
     }
+
+    return comment
   }
 }
 

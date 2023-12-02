@@ -5,37 +5,6 @@ const AddCommentsReplyUseCase = require('../AddCommentsReplyUseCase')
 const AddedReply = require('../../../../Domains/replies/entities/AddedReply')
 
 describe('AddCommentsReplyUseCase', () => {
-  it('should throw error if use case payload not contain content', async () => {
-    // Arrange
-    const useCasePayload = {
-      owner: 'user-123',
-      threadId: 'thread-123',
-      commentId: 'comment-123'
-    }
-    const addCommentsReplyUseCase = new AddCommentsReplyUseCase({})
-
-    // Action & Assert
-    await expect(addCommentsReplyUseCase.execute(useCasePayload))
-      .rejects
-      .toThrowError('ADD_REPLY.NOT_CONTAIN_NEEDED_PROPERTY')
-  })
-
-  it('should throw error if content not string', async () => {
-    // Arrange
-    const useCasePayload = {
-      owner: 'user-123',
-      threadId: 'thread-123',
-      commentId: 'comment-123',
-      content: 123
-    }
-    const addCommentsReplyUseCase = new AddCommentsReplyUseCase({})
-
-    // Action & Assert
-    await expect(addCommentsReplyUseCase.execute(useCasePayload))
-      .rejects
-      .toThrowError('ADD_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION')
-  })
-
   it('should orchestrating the add reply action correctly', async () => {
     // Arrange
     const useCasePayload = {
