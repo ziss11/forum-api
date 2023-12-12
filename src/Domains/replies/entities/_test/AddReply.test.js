@@ -1,47 +1,51 @@
-const AddReply = require('../AddReply')
+const AddReply = require('../AddReply');
 
 describe('a AddReply entities', () => {
-  it('should throw error when payload did not contain needed property', () => {
-    // Arrange
-    const payload = {
-      owner: 'user-123',
-      threadId: 'threadId-123',
-      commentId: 'comment-123'
-    }
+    it('should throw error when payload did not contain needed property', () => {
+        // Arrange
+        const payload = {
+            owner: 'user-123',
+            threadId: 'threadId-123',
+            commentId: 'comment-123',
+        };
 
-    // Action and Assert
-    expect(() => new AddReply(payload)).toThrowError('ADD_REPLY.NOT_CONTAIN_NEEDED_PROPERTY')
-  })
+        // Action and Assert
+        expect(() => new AddReply(payload)).toThrowError(
+            'ADD_REPLY.NOT_CONTAIN_NEEDED_PROPERTY'
+        );
+    });
 
-  it('should throw error when payload did not meet type spesification', () => {
-    // Arrange
-    const payload = {
-      owner: 123,
-      threadId: 123,
-      commentId: 'comment-123',
-      content: 123
-    }
+    it('should throw error when payload did not meet type spesification', () => {
+        // Arrange
+        const payload = {
+            owner: 123,
+            threadId: 123,
+            commentId: 'comment-123',
+            content: 123,
+        };
 
-    // Action and Assert
-    expect(() => new AddReply(payload)).toThrowError('ADD_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION')
-  })
+        // Action and Assert
+        expect(() => new AddReply(payload)).toThrowError(
+            'ADD_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION'
+        );
+    });
 
-  it('should create addReply object correctly', () => {
-    // Arrange
-    const payload = {
-      owner: 'owner-123',
-      threadId: 'thread-123',
-      commentId: 'comment-123',
-      content: 'content'
-    }
+    it('should create addReply object correctly', () => {
+        // Arrange
+        const payload = {
+            owner: 'owner-123',
+            threadId: 'thread-123',
+            commentId: 'comment-123',
+            content: 'content',
+        };
 
-    // Action
-    const { owner, threadId, commentId, content } = new AddReply(payload)
+        // Action
+        const { owner, threadId, commentId, content } = new AddReply(payload);
 
-    // Assert
-    expect(owner).toEqual(payload.owner)
-    expect(threadId).toEqual(payload.threadId)
-    expect(commentId).toEqual(payload.commentId)
-    expect(content).toEqual(payload.content)
-  })
-})
+        // Assert
+        expect(owner).toEqual(payload.owner);
+        expect(threadId).toEqual(payload.threadId);
+        expect(commentId).toEqual(payload.commentId);
+        expect(content).toEqual(payload.content);
+    });
+});

@@ -1,9 +1,9 @@
-const routes = (handler) => ([
-  {
-    method: 'POST',
-    path: '/users',
-    handler: handler.postUserHandler
-  }
-])
+const routes = (handler) => [
+    {
+        method: 'POST',
+        path: '/users',
+        handler: handler.postUserHandler,
+    },
+];
 
-module.exports = routes
+module.exports = routes;

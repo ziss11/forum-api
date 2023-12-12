@@ -1,43 +1,47 @@
-const AddedReply = require('../AddedReply')
+const AddedReply = require('../AddedReply');
 
 describe('a AddedReply entities', () => {
-  it('should throw error when payload did not contain needed property', () => {
-    // Arrange
-    const payload = {
-      id: 'reply-123',
-      content: 'sebuah balasan'
-    }
+    it('should throw error when payload did not contain needed property', () => {
+        // Arrange
+        const payload = {
+            id: 'reply-123',
+            content: 'sebuah balasan',
+        };
 
-    // Action and Assert
-    expect(() => new AddedReply(payload)).toThrowError('ADDED_REPLY.NOT_CONTAIN_NEEDED_PROPERTY')
-  })
+        // Action and Assert
+        expect(() => new AddedReply(payload)).toThrowError(
+            'ADDED_REPLY.NOT_CONTAIN_NEEDED_PROPERTY'
+        );
+    });
 
-  it('should throw error when payload did not meet type spesification', () => {
-    // Arrange
-    const payload = {
-      id: 'reply-123',
-      content: 123,
-      owner: 'user-123'
-    }
+    it('should throw error when payload did not meet type spesification', () => {
+        // Arrange
+        const payload = {
+            id: 'reply-123',
+            content: 123,
+            owner: 'user-123',
+        };
 
-    // Action and Assert
-    expect(() => new AddedReply(payload)).toThrowError('ADDED_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION')
-  })
+        // Action and Assert
+        expect(() => new AddedReply(payload)).toThrowError(
+            'ADDED_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION'
+        );
+    });
 
-  it('should create addedReply object correctly', () => {
-    // Arrange
-    const payload = {
-      id: 'reply-123',
-      content: 'sebuah balasan',
-      owner: 'user-123'
-    }
+    it('should create addedReply object correctly', () => {
+        // Arrange
+        const payload = {
+            id: 'reply-123',
+            content: 'sebuah balasan',
+            owner: 'user-123',
+        };
 
-    // Action
-    const { id, content, owner } = new AddedReply(payload)
+        // Action
+        const { id, content, owner } = new AddedReply(payload);
 
-    // Assert
-    expect(id).toEqual(payload.id)
-    expect(content).toEqual(payload.content)
-    expect(owner).toEqual(payload.owner)
-  })
-})
+        // Assert
+        expect(id).toEqual(payload.id);
+        expect(content).toEqual(payload.content);
+        expect(owner).toEqual(payload.owner);
+    });
+});

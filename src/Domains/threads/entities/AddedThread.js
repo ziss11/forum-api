@@ -1,23 +1,27 @@
 class AddedThread {
-  constructor (payload) {
-    this._validatePayload(payload)
+    constructor(payload) {
+        this._validatePayload(payload);
 
-    this.id = payload.id
-    this.title = payload.title
-    this.owner = payload.owner
-  }
-
-  _validatePayload (payload) {
-    const { id, title, owner } = payload
-
-    if (!id || !title || !owner) {
-      throw new Error('ADDED_THREAD.NOT_CONTAIN_NEEDED_PROPERTY')
+        this.id = payload.id;
+        this.title = payload.title;
+        this.owner = payload.owner;
     }
 
-    if (typeof id !== 'string' || typeof title !== 'string' || typeof owner !== 'string') {
-      throw new Error('ADDED_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION')
+    _validatePayload(payload) {
+        const { id, title, owner } = payload;
+
+        if (!id || !title || !owner) {
+            throw new Error('ADDED_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
+        }
+
+        if (
+            typeof id !== 'string' ||
+            typeof title !== 'string' ||
+            typeof owner !== 'string'
+        ) {
+            throw new Error('ADDED_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
+        }
     }
-  }
 }
 
-module.exports = AddedThread
+module.exports = AddedThread;
